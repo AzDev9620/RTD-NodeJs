@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--    <meta name='viewport' content='width=device-width,  minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes'>-->
+
+    <meta charset="UTF-8">
+    <title>Kirish</title>
+<!--    <link rel="stylesheet" href="style.css">-->
+
+</head>
+<body>
+<form>
+    <input id="username" name="username" placeholder="username" type="text" required value="www">
+    <input id="password" type="password" placeholder="password" required value="1">
+    <input id="login" type="submit" value="Kirish">
+</form>
+</body>
+</html>
+<script>
+
+    var login = document.getElementById("login")
+
+    login.addEventListener("click", (e) => {
+        e.preventDefault()
+        // console.log(e.checkValidity())
+        var username = document.getElementById("username").value
+        var password = document.getElementById("password").value
+        var xhr = new XMLHttpRequest()
+
+        xhr.open('POST', '/signin')
+        var userdata = {
+            username,
+            password
+        }
+        console.log(userdata)
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.send(JSON.stringify(userdata))
+        xhr.onload = (e) => {
+            console.log(e)
+            console.log(e.target.responseText)
+            if(e.target.responseText)window.location='/'
+            // alert(`onload..., ${e.target.responseText}`)
+        }
+        xhr.onerror = (e) => {
+            console.log(e)
+            // alert(`server error! ${e.target.responseText}`)
+        }
+    })
+</script>

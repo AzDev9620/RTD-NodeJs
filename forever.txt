@@ -1,0 +1,13 @@
+root@vultr:~/rtd# forever-service install myServiceRtd --script app_rtd.js
+forever-service version 0.5.11
+
+Platform - Ubuntu 16.04.3 LTS
+insserv: warning: script 'K01myService' missing LSB tags and overrides
+insserv: warning: script 'myService' missing LSB tags and overrides
+myServiceRtd provisioned successfully
+
+Commands to interact with service myServiceRtd
+Start   - "sudo service myServiceRtd start"
+Stop    - "sudo service myServiceRtd stop"
+Status  - "sudo service myServiceRtd status"
+Restart - "sudo service myServiceRtd restart"

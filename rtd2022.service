@@ -1,0 +1,35 @@
+[Unit]
+Description=RTD 2022
+Documentation=https://google.com
+After=network.target
+
+[Service]
+# set the working directory to have consistent relative paths
+# set the working directory to have consistent relative paths
+WorkingDirectory=/home/rtd2
+
+
+User=root
+ExecStart=/usr/bin/node index.js
+Restart=always
+
+
+# let 500ms between the crash and the restart
+RestartSec=1000ms
+
+# send log tot syslog here (it doesn't compete with other log config in the app itself)
+StandardOutput=rtd2022output.log #iwlamadi
+StandardError=rtd2022error.log #iwlamadi
+#StandardOutput=syslog
+#StandardError=syslog
+ess name in syslog
+SyslogIdentif
+# rtd2022 procier=rtd2022 #chunarsiz
+
+
+# set the environement (dev, prod…)
+Environment=NODE_ENV=production
+
+
+[Install]
+WantedBy=multi-user.target

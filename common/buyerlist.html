@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>Список покупателей-RTD</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+</head>
+<body>
+<div include-html="menulist.html"></div>
+
+<div id="tweety">
+    <div class="container2">
+        <!--<header class="toolbar">
+            <h2>Список покупателей RTD</h2>
+        </header>-->
+        <div class="list__wrapper" @scroll="onScroll">
+            <ul class="list list-group">
+                <li class="list__item tweet  list-group-item list-group-item-success  " v-for="tweet in tweets">
+                    <!--<div class="tweet__left">
+                        <img :src="tweet.avatar" class="tweet__img">
+                    </div>-->
+                    <span class="tweet__body ">
+                        <a target="_self" :href="'/buyerprofile?id=' + tweet.id" class=" landmarktxt " :title="tweet.remark!=null ? tweet.remark : ''" >{{ tweet.customerdata  }} | {{ tweet.remark!=null ? tweet.remark : "" }}</a>
+                        <a target="_blank" :href="'/buyerprofile?id=' + tweet.id" class=" " >
+                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        </a>
+
+                        <a  v-if="userdata.rol>0"  :href="'userprofile/'+tweet.uid" >{{tweet.name}} {{tweet.surname}}</a>
+
+
+                        <span v-if="userdata.rol==1" class="badge pull-right">
+                         <a class="buyerdel" v-on:click="delbuyer(tweet.id)" class=""
+                            target="_blank">
+                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                         </a>
+                    </span>
+
+                    </span>
+                </li>
+                <li class="list__loader">
+                    <img src="loader.gif">
+                </li>
+            </ul>
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>
+
+
+<script src="/vue/dist/vue.min.js"></script>
+<script src="/vue-resource/dist/vue-resource.min.js"></script>
+<script src="main.js"></script>
+<script type="text/javascript">
+    var origin = window.location.origin
+    var pathname = window.location.pathname
+    var paramsobj = searchtoobject();
+    var id = Number(paramsobj.id !== undefined ? paramsobj.id : 0);
+    var userdata = {}
+
+    var socket = io(/*'http://192.168.3.5:3000', {
+        // WARNING: in that case, there is no fallback to long-polling
+        transports: [ 'websocket'/!*, 'polling'*!/ ] // or [ 'websocket', 'polling' ], which is the same thing
+    }*/);
+    socket.on('connect', function () {
+        console.log('Siz soket serverga ulandingiz');
+    });
+    var uniqueArray = function (arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) == pos;
+        });
+    };
+    socket.emit('sessioncheckreq', true);
+    socket.on('sessioncheckres', function (data) {
+        console.log(data)
+        userdata = data;
+        if (data!=null){
+            new Vue({
+                el: '#tweety',
+                data: {
+                    tweets: [],
+                    resource_url: origin + '/buyerlistfull/'+id,///0/50
+                    loading: false,
+                    userdata: {}
+                },
+                methods: {
+                    onScroll: function (event) {
+                        return
+                        var wrapper = event.target,
+                            list = wrapper.firstElementChild
+
+                        var scrollTop = wrapper.scrollTop,
+                            wrapperHeight = wrapper.offsetHeight,
+                            listHeight = list.offsetHeight
+
+                        var diffHeight = listHeight - wrapperHeight
+
+                        //console.log('listHeight......', listHeight)
+                        //console.log('wrapperHeight......', wrapperHeight)
+                        //console.log('diffHeight......', diffHeight)
+                        //console.log('scrollTop......', scrollTop)
+
+                        if (diffHeight <= scrollTop && !this.loading) {
+                            this.load()
+                        }
+                    },
+                    load: function () {
+                        this.loading = true
+                        this.$http.get(this.resource_url).then(function (response) {
+                            console.log('response......', response)
+                            console.log('Number(userdata.rol)......', Number(userdata.rol))
+
+                            this.userdata =  userdata ;
+
+                            var json = response.data;
+                            var tweets = json.data
+
+                            this.tweets = this.tweets.concat(tweets)
+                            this.resource_url = json.next_page_url
+                            this.loading = false
+                        }, function (error) {
+                            console.log(error)
+                            this.loading = false
+                        })
+                    },
+                    delbuyer:function (id) {
+                        this.$http.delete('/buyer/' + id).then(function (response) {
+//                    console.log('del-response......', response)
+                            var ws = this.tweets;
+                            for (var i in ws) {
+                                if (id == ws[i].id) {
+                                    if (i > -1) {
+                                        this.tweets.splice(i, 1);
+                                    }
+                                }
+                            }
+                        }, function (error) {
+                            console.log(error)
+                        });
+                        this.$http.delete('/delwish/' + id).then(function (response) {
+//                    console.log('del-response......', response)
+                            var ws = this.tweets;
+                            for (var i in ws) {
+                                if (id == ws[i].id) {
+                                    if (i > -1) {
+                                        this.tweets.splice(i, 1);
+                                    }
+                                }
+                            }
+                        }, function (error) {
+                            console.log(error)
+                        });
+                    }
+                },
+                created: function () {
+                    this.load()
+                }
+
+
+            })
+        } else{
+            window.location.replace('/signin');
+        }
+
+
+    });
+    socket.on('reslogin', function (data) {
+        console.log(data)
+        if (data) {
+            window.location.replace('/mainpage');
+        }
+    });
+
+</script>
+
+
+
+
+

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content=' content="width=100, initial-scale=1"'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>FLAT-RTD</title>
+    <!--    <script src="/socket.io/socket.io.js"></script>-->
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+    <script src="/vue/dist/vue.min.js"></script>
+    <script src="/vue-resource/dist/vue-resource.min.js"></script>
+
+    <link rel="stylesheet" href='/json-forms/dist/css/brutusin-json-forms.min.css'/>
+    <script src="/json-forms/dist/js/brutusin-json-forms.min.js"></script>
+    <script src="/json-forms/dist/js/brutusin-json-forms-bootstrap.min.js"></script>
+    <script src="/schema.js"></script>
+
+
+    <style type="text/css" media="screen">
+        body {
+            padding: 0px;
+        }
+
+        #container {
+            width: 380px;
+            position: relative;
+            top: 150px;
+            /*margin-right: 10px;*/
+        }
+
+        #getdata {
+            color: #FFEB3B;
+            /*background-color: #337ab7;*/
+            /*border-color: #2e6da4;*/
+        }
+
+        #images {
+            position: relative;
+            top: 150px;
+            /*margin-right: 10px;*/
+        }
+
+        #getimages {
+            color: #FFEB3B;
+        }
+
+        #props-dropdown {
+            display: inline-flex;
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div id="navbar_header" class="navbar-header">
+            <a href="/mainpage" class="navbar-brand">RTD</a>
+
+            <div id="props-dropdown" class="dropdown   ">
+                <button class="   btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Разделы
+                    <span class="caret"></span>
+                </button>
+                <ul id="props" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <!--<li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>-->
+                </ul>
+            </div>
+            <button href="#" id="getdata" class=" btn btn-primary"><span class="glyphicon glyphicon-send "
+                                                                         aria-hidden="true"></span>
+            </button>
+            <a href="#images" id="getimages" class=" btn btn-primary">
+                Показать фотографии <span class="glyphicon glyphicon-picture "
+                                          aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+<div id="container"></div>
+<div id="images">
+    <div class="row">
+        <div v-for="obj in images" class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img class="im" v-bind:src="urtg+obj.image" alt="...">
+
+                <div class="caption">
+                    <!--<h3>Thumbnail label</h3>-->
+                    <p>{{ obj.ct }}</p>
+                    <!--<p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript">
+
+    let container = document.getElementById('container');
+    let BrutusinForms = brutusin["json-forms"];
+    let bf;
+    let prevdata;
+
+
+    // add support for password and file
+    BrutusinForms.addDecorator(function (element, schema) {
+        if (element.tagName) {
+            let tagName = element.tagName.toLowerCase();
+            let className = element.className.toLowerCase();
+
+            if ($(element).text() === 'Add' || $(element).text() === 'Add item') {
+//                $(element)
+                $(element).text("").addClass("glyphicon glyphicon-plus")
+//                console.log("element....", $(element))
+            }
+            if (schema !== undefined && schema.hasOwnProperty('c') && tagName === "label") {
+//                console.log("element....", element )
+//                console.log("schema....", $(element).html() )
+                $(element).css({"cursor": "pointer", "text-decoration": "underline"});
+                $(element).parent().next("td").fadeToggle(0);
+
+                $(element).click(function () {
+//                    $(this).parent().next("td").hide();
+                    $(this).parent().next("td").fadeToggle(300)
+                });
+            }
+
+            if (tagName === "td" && className === "prop-name") {
+                if (schema.format === "hidden") {
+//                     console.log(element)
+//                    element.display = "none";
+                    $(element).hide();
+                }
+            }
+
+
+            if (tagName === "td" && className === "prop-name") {
+                if (schema.format === "hidden") {
+//                     console.log(element)
+//                    element.display = "none";
+                    $(element).hide();
+                }
+            }
+            if (tagName === "input" && schema.type === "string") {
+                if (schema.format === 'inputstream' || schema.format === 'file') {
+                    element.type = 'file';
+                } else if (schema.format === 'password') {
+                    element.type = 'password';
+                } else if (schema.format === 'date') {
+                    element.type = 'datetime-local';
+                } else if (schema.format === 'tel') {
+                    element.type = 'tel';
+                } else if (schema.format === 'color') {
+                    element.type = 'color';
+                } else if (schema.format === 'getgeopos') {
+                    element.type = 'button';
+                    element.value = 'Получить геопозицию';
+                    $(element).click(function () {
+                        let options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                        let success = function (pos) {
+                            let crd = pos.coords;
+//                            console.log(crd );
+                            let geolocation = {
+                                "lat": crd.latitude,
+                                "lon": crd.longitude,
+                                "acc": Math.round(crd.accuracy)
+                            };
+//                            console.log(schema);
+//                            console.log(element);
+                            if (prevdata.maininfo === undefined) {
+                                prevdata['maininfo'] = {address: {geolocation: geolocation}}
+                            } else {
+                                prevdata = bf.getData();
+                                console.log(prevdata);
+                                prevdata.maininfo.address['geolocation'] = geolocation;
+                            }
+                            $(container).empty();
+                            bf.render(container, prevdata);
+                        }
+                        let error = function (err) {
+                            console.warn(err);
+                        }
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+                    });
+                } else if (schema.format === 'toggle') {
+                    element.type = 'button';
+                    element.value = 'toggle';
+                    $(element).click(function (e) {
+                        console.log(e);
+                        console.log(schema);
+                        console.log(element);
+//                        $(this).closest("tr").nextAll("tr").hide();
+
+                    });
+
+                }
+            }
+        }
+    });
+
+
+    console.log(window.location.search);
+    let origin = window.location.origin
+    let pathname = window.location.pathname
+    let id = Number(window.location.search.split("=")[1])
+    let schema = schem.flat.schema;
+
+    if (id === 0) {
+        bf = BrutusinForms.create(schema);
+//            let container = document.getElementById('container');
+        bf.render(container/*, prevdata*/);
+    }
+
+    let access = true;
+
+    new Vue({
+        el: '#tweety,#images',
+        data: {
+            resource_url: `${origin}${pathname}/${id}`,
+            loading: false,
+            ur: origin,
+            images: [],
+            urtg: ""
+        },
+        methods: {
+
+            load: function () {
+//                this.loading = true
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+                    let data = response.data
+                    this.urtg = `${data.url}/`
+                    prevdata = data.elon;
+                    console.log('prevdata......', prevdata)
+                    let mi = data.elon.maininfo;
+                    console.log('mi......', mi)
+                    access = response.data.access;
+
+                    let navbar_header = $("#navbar_header");
+
+                    if (
+                        // mi !== undefined && mi.ownertel !== undefined &&
+                        0 < mi.ownertel) {
+                        mi.ownertel.forEach(function (tel) {
+                            navbar_header.append(
+                                '<a href="tel:+' + tel + '" id="getimages" class=" btn btn-primary"><span class="glyphicon glyphicon-earphone " aria-hidden="true"></span></a>')
+                        });
+                    }
+
+
+//            let BrutusinForms = brutusin["json-forms"];
+                    bf = BrutusinForms.create(schema);
+//            let container = document.getElementById('container');
+                    bf.render(container, prevdata);
+                    let prs = schema.properties;
+                    let btns = "";
+                    console.log('schema', schema);
+                    console.log('prs', prs);
+                    Object.keys(prs).forEach(function (key) {
+                        console.log('key', key);
+//                console.log('key', prs[key].title);
+                        let t = prs[key].title;
+                        btns += "<li class='pb '><a href='#' data-key='" + key + "'>" + t + "</a></li>";
+
+//                        btns += "<button type=button class='pb btn btn-default' data-key='" + key + "'>" + t + "</button>";
+                        if (key !== "maininfo") {
+                            let l = $("#container").find("label:contains(" + t + ")")
+//        console.log(l);
+                            let tr = l.closest("tr");
+                            tr.hide();
+                        }
+
+
+                    });
+                    $("#props").html(btns);
+
+
+                    let cit = [
+                        "Самое важное изобретение в истории человечества - письменный договор. Он позволяет людям изложить на бумаге все причины, по которым они не доверяют друг другу.",
+                        "Хорошее отношение к покупателю заканчивается вместе с его деньгами.",
+                        "Стоимость недвижимости определяется тремя факторами: местоположением, местоположением и ………местоположением)))",
+                        "Дом - это место, где женщина трудится в отсутствие мужчины, а мужчина отдыхает в присутствии женщины.",
+                        "От перемены места жительства люди не меняются.",
+                        "Жизнь - движение, но без недвижимости - это не жизнь!",
+                        "Хорошая квартира - это когда в самой маленькой комнате в самом дальнем углу незаметно пасется стадо бегемотов.",
+                        "Ночь. Тишина. И только слышно, как растут цены на недвижимость…",
+                        "Если есть дорогая покупка, свидетельсвующая о превратно понимаемом снобизме, то это автомобиль. Автомобили падают в цене. Стоимость домов растет. (Харви Маккей)",
+                        "Обзаводясь землей, приглядись прежде всего к воде, дороге, соседу. (Плиний Старший)",
+                        "Она ощутима, прочна, красива. С моей точки зрения, она даже артистична. Я просто обожаю недвижимость. (Дональд Трамп)",
+                        "Временное жильё самое постоянное.",
+                        "Дом — это всего лишь место, куда идёшь, если некуда больше пойти.",
+                        "Идеальный размер дома: чтобы было слышно детей, но не слишком отчетливо. Миньон Маклофлин",
+                        "Дом — это место, где мы отдыхаем от усилий быть вежливыми с окружающими. «20,000 Quips d Quotes»",
+                        "В продаже есть только два вида домов: те, которые нам не подходят, и те, которые нам не по средствам"
+                    ]
+
+                    shuffle(cit)
+
+                    // let imar = prevdata.maininfo.images
+                    // this.images = imar != undefined ? imar : []
+
+                    this.images = prevdata.maininfo !== undefined && prevdata.maininfo.images !== undefined ? prevdata.maininfo.images : []
+
+
+                    let im = [], i = 0;
+                    this.images.forEach(function (el) {
+                        im.push({
+                            image: el,
+                            ct: cit[i]
+                        })
+                        i++
+                    });
+                    this.images = im
+                    console.log('images......', this.images.length)
+                    if (this.images.length === 0) {
+                        $("#getimages").hide()
+                    }
+
+                    $(document).ready(function () {
+                        $(".im").on("error", function () {
+                            console.log($(this).attr('src'))
+                            $(this).attr('src', 'https://static.olx.uz/img-olxuz/' + getfname($(this).attr('src')));
+
+                        });
+                    });
+
+
+//                    this.loading = false
+                }, function (error) {
+                    console.log(error)
+//                    this.loading = false
+                })
+            }
+        },
+        created: function () {
+            this.load()
+
+
+        }
+
+
+    })
+
+
+    $(document).on("click", "#props .pb", function () {
+        console.log($(this));
+        $(this).addClass("active").siblings().removeClass("active")
+        let label = $(this).text();
+//        console.log(label);
+        let l = $("#container").find("label:contains(" + label + ")")
+//        console.log(l);
+        let tr = l.closest("tr");
+        let trsibl = tr.siblings("tr");
+        console.log(trsibl);
+        trsibl.hide();
+        tr.show();
+        tr.find("tr").show();
+    });
+    let xhr, stat = 0;
+    $("#getdata").click(function () {
+        console.log(JSON.stringify(bf.getData(), null, 2))
+        if (!access) return;
+
+//        bf.validate();
+        if (bf.getData() == null) return
+        if (xhr !== undefined && stat === 0) {
+            xhr.abort()
+        }
+        let values = JSON.stringify(bf.getData(), null, 2)
+        xhr = $.ajax({
+            //processData:true,
+            //async: false,
+            url: '/olx',
+            method: id === 0 ? 'post' : 'put',
+            data: {id: id, s: values},
+            beforeSend: function () {
+                $("#getdata").css({"color": "#FF5722"})
+                stat = 0;
+            },
+            success: function (data) {
+                id = data.id
+                if (history.pushState) {
+                    let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + id;
+                    window.history.pushState({path: newurl}, '', newurl);
+                    $("#getdata").css({"color": "#FFEB3B"})
+                }
+            }, complete: function (textStatus) {
+                console.log(textStatus)
+                stat = Number(textStatus.status)
+            }
+        });
+    });
+
+
+    function shuffle(array) {
+        array.sort(function () {
+            Math.random() - 0.5
+        });
+    }
+
+
+    function getfname(url) {
+        let nmar = url.split("/")
+        //console.log(nmar[nmar.length - 1])
+        return nmar[nmar.length - 1]
+    }
+
+</script>
+<!--
+<script src="/dbcon.js"></script>
+-->
+
+

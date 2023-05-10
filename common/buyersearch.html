@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content=' content="width=100, initial-scale=1"'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>ЖЕЛАНИЕ-RTD</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+    <script src="/vue/dist/vue.min.js"></script>
+    <script src="/vue-resource/dist/vue-resource.min.js"></script>
+
+    <link rel="stylesheet" href='/json-forms/dist/css/brutusin-json-forms.min.css'/>
+    <script src="/json-forms/dist/js/brutusin-json-forms.min.js"></script>
+    <script src="/json-forms/dist/js/brutusin-json-forms-bootstrap.min.js"></script>
+    <script src="/buyersearchschema.js"></script>
+
+
+    <style type="text/css" media="screen">
+        body {
+            padding: 0px;
+        }
+
+        #container {
+            width: 380px;
+            position: relative;
+            /*top: 150px;*/
+            /*margin-right: 10px;*/
+        }
+
+        #getdata
+            /*,#getdata:hover*/
+        {
+            color: #FFEB3B;
+            /*background-color: #337ab7;*/
+            /*border-color: #2e6da4;*/
+        }
+
+        #props-dropdown {
+            display: inline-flex;
+        }
+
+        #wrp {
+            position: relative;
+            top: 51px;
+        }
+
+    </style>
+</head>
+<body>
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a href="/buyerlist" class="navbar-brand">RTD</a>
+
+            <div id="props-dropdown" class="dropdown   ">
+                <button class="   btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Разделы
+                    <span class="caret"></span>
+                </button>
+                <ul id="props" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <!--<li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>-->
+                </ul>
+            </div>
+            <button href="#" id="getdata" class=" btn btn-primary"><span class="glyphicon glyphicon-send "
+                                                                         aria-hidden="true"></span>
+            </button>
+            <button id="tobuyer" type="button" class="btn btn-primary btn">К заказчику</button>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+
+<div id="wrp">
+    <div>
+        <ul id="ul-wishes" class="list-group headerlist ">
+            <li v-for="wish in wishes" class="wsh list-group-item list-group-item-info">
+                {{ wish.txt }}
+
+                &nbsp<a :href="'/wishresultlist?id='+wish.id+'&&resultname='+wish.txt" class="" target="_self">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            </a>
+                &nbsp<a :href="'/wishresultlist?id='+wish.id+'&&resultname='+wish.txt" class="" target="_blank">
+                <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+            </a>
+                <hr>
+                <div>
+                            <span class="badge pull-right">
+                             <a class="wishdel" v-on:click="delwish(wish.id)" class=""
+                                target="_blank">
+                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                             </a>
+                        </span>
+                    &nbsp&nbsp&nbsp
+                    <span class="badge pull-right">
+                            {{ wish.len }}
+                        </span>
+                </div>
+
+
+            </li>
+        </ul>
+
+    </div>
+
+    <div id="container"></div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript">
+
+    var access = true;
+    var userdata;
+
+
+    var socket = io(/*'http://192.168.3.5:3000', {
+        // WARNING: in that case, there is no fallback to long-polling
+        transports: [ 'websocket'/!*, 'polling'*!/ ] // or [ 'websocket', 'polling' ], which is the same thing
+    }*/);
+    socket.on('connect', function () {
+        console.log('Siz soket serverga ulandingiz');
+    });
+    var uniqueArray = function (arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) == pos;
+        });
+    };
+    socket.emit('sessioncheckreq', true);
+
+    socket.on('reslogin', function (data) {
+        console.log(data)
+        if (data) {
+            window.location.replace('/mainpage');
+        }
+    });
+
+
+    var container = document.getElementById('container');
+    var BrutusinForms = brutusin["json-forms"];
+    var bf;
+    var prevdata;
+
+
+    // add support for password and file
+    BrutusinForms.addDecorator(function (element, schema) {
+        if (element.tagName) {
+            var tagName = element.tagName.toLowerCase();
+            var className = element.className.toLowerCase();
+
+            if ($(element).text() == 'Add' || $(element).text() == 'Add item') {
+//                $(element)
+                $(element).text("").addClass("glyphicon glyphicon-plus")
+//                console.log("element....", $(element))
+            }
+            if (schema != undefined && schema.hasOwnProperty('c') && tagName == "label") {
+//                console.log("element....", element )
+//                console.log("schema....", $(element).html() )
+                $(element).css({"cursor": "pointer", "text-decoration": "underline"});
+                $(element).parent().next("td").fadeToggle(0);
+
+                $(element).click(function (e) {
+//                    $(this).parent().next("td").hide();
+                    $(this).parent().next("td").fadeToggle(300)
+                });
+            }
+
+            if (tagName === "td" && className === "prop-name") {
+                if (schema.format === "hidden") {
+//                     console.log(element)
+//                    element.display = "none";
+                    $(element).hide();
+                }
+            }
+            if (tagName === "input" && schema.type === "string") {
+                if (schema.format === 'inputstream' || schema.format === 'file') {
+                    element.type = 'file';
+                } else if (schema.format === 'password') {
+                    element.type = 'password';
+                } else if (schema.format === 'date') {
+                    element.type = 'datetime-local';
+                } else if (schema.format === 'tel') {
+                    element.type = 'tel';
+                } else if (schema.format === 'color') {
+                    element.type = 'color';
+                } else if (schema.format === 'getgeopos') {
+                    element.type = 'button';
+                    element.value = 'Получить геопозицию';
+                    $(element).click(function () {
+                        var options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                        var success = function (pos) {
+                            var crd = pos.coords;
+//                            console.log(crd );
+                            var geolocation = {
+                                "lat": crd.latitude,
+                                "lon": crd.longitude,
+                                "acc": Math.round(crd.accuracy)
+                            };
+//                            console.log(schema);
+//                            console.log(element);
+                            if (prevdata.maininfo == undefined) {
+                                prevdata['maininfo'] = {address: {geolocation: geolocation}}
+                            } else {
+                                prevdata = bf.getData();
+                                console.log(prevdata);
+                                prevdata.maininfo.address['geolocation'] = geolocation;
+                            }
+                            $(container).empty();
+                            bf.render(container, prevdata);
+                        }
+                        var error = function (err) {
+                            console.warn(err);
+                        }
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+                    });
+                } else if (schema.format === 'toggle') {
+                    element.type = 'button';
+                    element.value = 'toggle';
+                    $(element).click(function (e) {
+                        console.log(e);
+                        console.log(schema);
+                        console.log(element);
+//                        $(this).closest("tr").nextAll("tr").hide();
+
+                    });
+
+                }
+            }
+        }
+    });
+
+    var origin = window.location.origin
+    var pathname = window.location.pathname;
+    var paramsobj = searchtoobject();
+    var id = Number(paramsobj.id != undefined ? paramsobj.id : 0);
+    var b = Number(paramsobj.b != undefined ? paramsobj.b : 0);
+    var pd = paramsobj.pd != undefined ? paramsobj.pd : "";
+
+    socket.on('sessioncheckres', function (data) {
+        console.log(data)
+        if (data != null) {
+            userdata = data;
+            var uid = userdata.id, rol = userdata.rol;
+            var v = new Vue({
+                el: '#tweety,#ul-wishes',
+                data: {
+                    wishes: [],
+                    tweets: [],
+                    resource_url: origin + pathname + "/" + uid + "/" + rol + "/" + id,
+                    loading: false
+                },
+                methods: {
+
+                    load: function () {
+//                this.loading = true
+                        this.$http.get(this.resource_url).then(function (response) {
+                            console.log('response......', response)
+                            access = response.data.access;
+
+                            var schema = schem.flat.schema;
+                            prevdata = response.data.data.elon;
+                            console.log('prevdata......', prevdata)
+//            var BrutusinForms = brutusin["json-forms"];
+                            bf = BrutusinForms.create(schema);
+//            var container = document.getElementById('container');
+                            bf.render(container, prevdata);
+                            var prs = schema.properties;
+                            var btns = "";
+                            Object.keys(prs).forEach(function (key) {
+//                console.log('key', key);
+//                console.log('key', prs[key].title);
+                                var t = prs[key].title;
+//                        btns += "<button class='pb btn btn-primary' data-key='" + key + "'>" + t + "</button>";
+
+                                btns += "<li class='pb '><a href='#' data-key='" + key + "'>" + t + "</a></li>";
+
+                            });
+                            $("#props").html(btns);
+//                    $(".prop-value").hide();
+                            var ws = []
+                            var result = response.data.data.result;
+                            var mi = prevdata.maininfo;
+                            var txt =
+                                (mi.retype != undefined ? mi.retype : '~') + "-" +
+                                (mi.dealtype != undefined ? mi.dealtype : '~') + "-" +
+                                (mi.address != undefined && mi.address.district != undefined ? mi.address.district : '~') + " " +
+                                (mi.rooms != undefined ? mi.rooms : '~') + "/" +
+                                (mi.floor != undefined ? mi.floor : '~') + "/" +
+                                (mi.storeys != undefined ? mi.storeys : '~') + " " +
+                                "цена: с " + (mi.pricestart != undefined ? mi.pricestart : '~') + " " +
+                                "до " + (mi.priceend != undefined ? mi.priceend : '~');
+
+                            console.log(txt)
+
+                            ws.push({
+                                id: id,
+//                        wish: w.wish.maininfo,
+                                txt: txt,
+                                len: result.length
+                            });
+                            this.wishes = ws
+                            console.log(this.wishes)
+
+                            $("#tobuyer").text(decodeURI(pd))
+
+
+//                    this.loading = false
+                        }, function (error) {
+                            console.log(error)
+//                    this.loading = false
+                        })
+                    },
+                    ajx: function () {
+
+                        var xhr, stat = 0;
+                        $("#getdata").click(function () {
+                            if (!access) return;
+
+                            $("#getdata").css({"color": "#FF0000"})
+                            var isvalid = bf.validate()
+                            console.log(isvalid)
+                            console.log(bf.getData())
+                            if (!isvalid || bf.getData() == null) return
+                            var values = (JSON.stringify(bf.getData(), null, 2)).replace("'", '\\"');
+                            if (xhr != undefined && stat == 0) {
+                                xhr.abort()
+                            }
+                            xhr = $.ajax({
+                                //processData:true,
+                                //async: false,
+                                url: '/wish',
+                                method: id == 0 ? 'post' : 'put',
+                                data: {id: id, b: b, s: values},
+                                beforeSend: function () {
+                                    $("#getdata").css({"color": "#4CAF50"})
+                                    stat = 0;
+                                },
+                                success: function (data) {
+                                    id = data.id
+                                    if (history.pushState) {
+                                        var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + id + '&&b=' + b;
+                                        window.history.pushState({path: newurl}, '', newurl);
+                                        $("#getdata").css({"color": "#FFEB3B"})
+                                    }
+
+                                    console.log(data)
+                                    var ws = []
+                                    var result = data.data.result;
+                                    var mi = data.data.elon.maininfo;
+                                    var txt =
+                                        (mi.retype != undefined ? mi.retype : '~') + "-" +
+                                        (mi.dealtype != undefined ? mi.dealtype : '~') + "-" +
+                                        (mi.address != undefined && mi.address.district != undefined ? mi.address.district : '~') + " " +
+                                        (mi.rooms != undefined ? mi.rooms : '~') + "/" +
+                                        (mi.floor != undefined ? mi.floor : '~') + "/" +
+                                        (mi.storeys != undefined ? mi.storeys : '~') + " " +
+                                        "цена: с " + (mi.pricestart != undefined ? mi.pricestart : '~') + " " +
+                                        "до " + (mi.priceend != undefined ? mi.priceend : '~');
+
+                                    console.log(txt)
+
+                                    v.wishes = [{
+                                        id: id,
+                                        txt: txt/*.replace(/\s/g,"_")*/,
+                                        len: result.length
+                                    }]
+                                    console.log(v.wishes)
+
+
+                                }, complete: function (textStatus) {
+//                console.log(textStatus)
+                                    stat = textStatus.status
+
+                                }
+                            });
+                        });
+                    }
+                },
+                created: function () {
+                    this.load()
+                    this.ajx()
+
+
+                }
+
+
+            });
+
+        } else {
+            window.location.replace('/signin');
+        }
+    });
+
+
+    /*$.ajax({
+     url: '/fields/flat',
+     method: 'get',
+     data: {
+     //groupnumber: value
+     },
+     success: function (data) {
+     //            var flat = data.flat
+     console.log('data', data);
+     var schema = schem.flat.schema;
+     prevdata = data.data;
+     //            var BrutusinForms = brutusin["json-forms"];
+     bf = BrutusinForms.create(schema);
+     //            var container = document.getElementById('container');
+     bf.render(container, prevdata);
+
+     var prs = schema.properties;
+     var btns = "";
+     Object.keys(prs).forEach(function (key) {
+     //                console.log('key', key);
+     //                console.log('key', prs[key].title);
+     var t = prs[key].title;
+     btns += "<button class='pb btn btn-primary' data-key='" + key + "'>" + t + "</button>";
+     });
+     $("#props").html(btns);
+
+     }
+     });*/
+
+    $(document).on("click", "#props .pb", function (e) {
+//        console.log($(this));
+        var label = $(this).text();
+//        console.log(label);
+        var l = $("#container").find("label:contains(" + label + ")")
+//        console.log(l);
+        var tr = l.closest("tr");
+        var trsibl = tr.siblings("tr");
+        console.log(trsibl);
+        trsibl.hide();
+        tr.show();
+        tr.find("tr").show();
+    });
+
+
+    $(document).on("click", ".prop-name", function (e) {
+//        $(this).
+    });
+
+    $("#tobuyer").click(function () {
+        location.href = '/buyerprofile?id=' + b;
+    });
+
+    function searchtoobject() {
+        var search = window.location.search;
+        var params = search.replace("\?", "");
+        var paramsobj = {};
+        params.split("&&").forEach(function (p) {
+            paramsobj[p.split("=")[0]] = p.split("=")[1];
+        });
+        return paramsobj;
+    }
+
+</script>
+<!--
+<script src="/dbcon.js"></script>
+-->
+
+

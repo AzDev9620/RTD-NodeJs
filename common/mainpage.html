@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>MAIN-RTD</title>
+    <link rel="stylesheet" href="../style.css">
+
+<!--        <script src="/socket.io/socket.io.js"></script>-->
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+</head>
+<body>
+<div include-html="menulist.html"></div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    /*var socket = io(/!*'http://192.168.3.5:3000', {
+        // WARNING: in that case, there is no fallback to long-polling
+        transports: [ 'websocket'/!*, 'polling'*!/ ] // or [ 'websocket', 'polling' ], which is the same thing
+    }*!/);
+    socket.on('connect', function () {
+        console.log('Siz soket serverga ulandingiz');
+    });
+    var uniqueArray = function (arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) == pos;
+        });
+    };
+    socket.emit('sessioncheckreq', true);
+    socket.on('sessioncheckres', function (data) {
+        console.log(data)
+        if (data==null) {
+            window.location.replace('/signin');
+        }else{
+            if(data.rol==1){
+                var li = '<li class="list-group-item list-group-item-info">\n' +
+                    '            <a href="/users"  class="">Rieltorlar</a>\n' +
+                    '            &nbsp<a href="/users" class="" target="_blank">\n' +
+                    '            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>\n' +
+                    '        </a>\n' +
+                    '        </li>';
+
+                li+='<li class="list-group-item list-group-item-info">\n' +
+                    '            <a href="/hudud"  class="">Hududlar</a>\n' +
+                    '            &nbsp<a href="/hudud" class="" target="_blank">\n' +
+                    '            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>\n' +
+                    '        </a>\n' +
+                    '        </li>';
+                $('.headerlist').append(li)
+            }
+        }
+    });
+    socket.on('reslogin', function (data) {
+        console.log(data)
+        if (data) {
+            window.location.replace('/mainpage');
+        }
+    });*/
+</script>
+
+<script src="main.js"></script>
+<!--
+<script src="/vue/dist/vue.min.js"></script>
+<script src="/vue-resource/dist/vue-resource.min.js"></script>
+
+
+-->
+
+
+
+

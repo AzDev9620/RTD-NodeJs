@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>LIST-RTD</title>
+    <link rel="stylesheet" href="../style.css">
+    <!--
+        <script src="/socket.io/socket.io.js"></script>
+    -->
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+</head>
+<body>
+<div class="  header1">
+    <ul class="list-group headerlist ">
+        <!--<li class="list-group-item list-group-item-info">
+            <a href="/mainpage" class="">Главная</a>
+            &nbsp<a href="/mainpage" class="" target="_blank">
+            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+        </a>
+        <li class="list-group-item list-group-item-info">
+            <a href="/list" class="">Общий список и поиск</a>
+            &nbsp<a href="/list" class="" target="_blank">
+            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+        </a>
+        </li>
+        <li class="list-group-item list-group-item-info">
+            <a href="/buyerlist" class="">Список покупателей</a>
+            &nbsp<a href="/buyerlist" class="" target="_blank">
+            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+        </a>
+        </li>
+        <li class="list-group-item list-group-item-info">
+            <a href="/buyerprofile?id=0" class="">Новый покупатель</a>
+            &nbsp<a href="/buyerprofile?id=0" class="" target="_blank">
+            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+        </a>
+        </li>-->
+    </ul>
+
+</div>
+
+<div id="tweety">
+    <div class="container2">
+        <div id="resultname"></div>
+        <div id="datalength">{{ datalength }}</div>
+        <!--<header class="toolbar">
+            <h2>BAZA RTD</h2>
+        </header>-->
+        <div class="list__wrapper" @scroll="onScroll">
+            <ul class="list list-group">
+                <li class="list__item tweet  list-group-item list-group-item-success  "
+                    v-for="tweet in tweets"
+                    v-bind:class="[tweet.msgstatus=='продан'
+                    ?prodan: tweet.msgstatus=='не продан'
+                    ?neprodan : tweet.msgstatus=='временно остановлен'
+                    ?vremennoostanovlen :tweet.msgstatus=='сдан'
+                    ?sdan :tweet.msgstatus=='не сдан'
+                    ?nesdan :'']"
+                        >
+                    <!---->
+                    <!--<div class="tweet__left">
+                        <img :src="tweet.avatar" class="tweet__img">
+                    </div>-->
+                    <span class="tweet__body "
+
+                            >
+                        <a target="_self" :href="'/flatext?id=' + tweet.id" class=" landmarktxt ">
+                            {{ tweet.landmark }}
+                        </a>
+                        <a target="_blank" :href="'/flatext?id=' + tweet.id" class=" ">
+                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        </a>
+                        <!--&nbsp&nbsp&nbsp<a :href="'tel:+'+tweet.tel" class="Blondie"
+                                          v-bind:class="{ display_none: tweet.tel==null }">
+                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                    </a>-->
+                        &nbsp&nbsp&nbsp <a target="_blank" :href="'/flatext?id=' + tweet.id + '#images'" class=" "
+                                           v-bind:class="{ display_none: tweet.im==0 }"     >
+                        <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+                    </a>
+                        <!--&nbsp&nbsp&nbsp<a target="_blank" :href="tweet.link" class="Blondie">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    </a>-->
+
+                    </span>
+                </li>
+                <li class="list__loader">
+                    <img src="loader.gif">
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    var origin = window.location.origin
+    var pathname = window.location.pathname
+</script>
+
+
+<script src="/vue/dist/vue.min.js"></script>
+<script src="/vue-resource/dist/vue-resource.min.js"></script>
+<script>
+
+    var origin = window.location.origin
+    var pathname = window.location.pathname
+    var paramsobj = searchtoobject();
+    var id = Number(paramsobj.id != undefined ? paramsobj.id : 0);
+    var resultname = decodeURI((paramsobj.resultname != undefined ? paramsobj.resultname : ""));
+    $("title,#resultname").text(resultname)
+
+    new Vue({
+        el: '#tweety',
+        data: {
+            pages: 5,
+            tweets: [],
+            resource_url: origin + '/wishresultlistext/' + id + '/' + this.pages,
+            datalength: "загрузка данных...",
+            loading: false,
+            prodan: 'prodan',
+            neprodan: 'neprodan',
+            vremennoostanovlen: 'vremennoostanovlen',
+            sdan: 'sdan',
+            nesdan: 'nesdan'
+        },
+        /*computed: {
+            classObject: function (val) {
+
+                if (val == 'продан') {
+                    return {
+                        prodan: true
+                    }
+                }
+
+            }
+        },*/
+        methods: {
+            onScroll: function (event) {
+                var wrapper = event.target,
+                        list = wrapper.firstElementChild
+                //console.log('wrapper......', wrapper)
+                //console.log('list......', list)
+
+
+                var scrollTop = wrapper.scrollTop,
+                        wrapperHeight = wrapper.offsetHeight,
+                        listHeight = list.offsetHeight
+
+                var diffHeight = listHeight - wrapperHeight
+
+                console.log('listHeight......', listHeight)
+                console.log('wrapperHeight......', wrapperHeight)
+                console.log('diffHeight......', diffHeight)
+                console.log('scrollTop......', scrollTop)
+
+                if (diffHeight <= scrollTop && !this.loading) {
+//                    this.load()
+                }
+            },
+            load: function () {
+                this.loading = true
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+                    var rn = response.resname
+//                    this.resname = rn.address.district + "/"
+
+                    var json = response.data;
+//                    if(json== undefined)return
+                    var tweets = json.data
+
+                    this.datalength = "найдено " + tweets.length + " шт.";
+
+                    this.tweets = this.tweets.concat(tweets);
+
+//                    this.resource_url = json.next_page_url
+                    this.loading = false
+                }, function (error) {
+                    console.log(error)
+                    this.loading = false
+                })
+            }
+        },
+        created: function () {
+            this.load()
+        }
+    })
+
+    function searchtoobject() {
+        var search = window.location.search;
+        var params = search.replace("\?", "");
+        var paramsobj = {};
+        params.split("&&").forEach(function (p) {
+            paramsobj[p.split("=")[0]] = p.split("=")[1];
+        });
+        return paramsobj;
+    }
+
+
+</script>
+
+
+
+

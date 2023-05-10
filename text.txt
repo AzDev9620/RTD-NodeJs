@@ -1,0 +1,1903 @@
+//rtsp://admin:1@192.168.3.15:554
+
+dahua.ni ip adresi
+rtsp://admin:admin@192.168.0.5:554
+
+ffmpeg -s 640x480 -f video4linux2 -i /dev/video0 -f mpeg1video \ -b 800k -r 30 http://example.com:8082/password/640/480/
+
+
+
+ffmpeg -s 320x240 -f video4linux2 -i rtsp://admin:1@192.168.3.15:554 -f mpeg1video \ -b 400k -r 30 http://192.168.3.102:8083/password/320/240/
+
+ffmpeg -s 320x240 -f video4linux2 -i rtsp://admin:admin@192.168.0.5:554 -f mpeg1video \ -b 400k -r 30 m1.mp4
+
+    nmap -sn 192.168.0.0/24
+
+--------------------------------------
+
+ffmpeg -f lavfi -i anullsrc -rtsp_transport udp -i rtsp://192.168.1.3:554/onvif1 -tune zerolatency -vcodec libx264 -t 12:00:00 -pix_fmt + -c:v copy -c:a aac -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/stream name
+
+
+    ffmpeg -f lavfi -i anullsrc -rtsp_transport udp -i rtsp://admin:admin@192.168.0.5:554 -tune zerolatency -vcodec libx264 -t 12:00:00 -pix_fmt + -c:v copy -c:a aac -strict experimental -f flv m.mp4
+
+
+    ffmpeg -f lavfi -i anullsrc -rtsp_transport udp -i rtsp://admin:admin@192.168.0.5:554 -tune zerolatency -vcodec libx264 -t 12:00:00 -pix_fmt + -c:v copy -c:a aac -strict experimental -f flv rtsp://192.168.0.102
+
+    ffmpeg  -f lavfi -i anullsrc -rtsp_transport udp -i rtsp://admin:admin@192.168.0.5:554 -tune zerolatency -vcodec libx264 -t 12:00:00 -pix_fmt + -c:v copy -c:a aac -strict experimental -f flv http://192.168.3.102:8083/s
+
+ffmpeg  -f lavfi -i anullsrc -rtsp_transport udp -i rtsp://admin:admin@192.168.0.5:554 -tune zerolatency -vcodec libx264 -t 12:00:00 -pix_fmt + -c:v copy -c:a aac -strict experimental -f mpegts http://192.168.3.102:8083/s
+
+
+
+//=================
+
+ffmpeg -rtsp_transport tcp -i rtsp://admin:admin@192.168.0.5:554 -f mpegts http://localhost:8083/s
+
+ffmpeg -loglevel quiet -r 1 -i rtsp://admin:admin@192.168.0.5:554 -f mpegts http://localhost:8083/s
+
+
+//------------------------
+
+    ffmpeg -i space.mp4 -vcodec libx264 -tune zerolatency -crf 18 http://localhost:1234/feed1.ffm
+
+
+ffmpeg -i rtsp://admin:admin@192.168.0.5:554 -vcodec libx264 -tune zerolatency -crf 18 http://localhost:1234/feed1.ffm
+
+
+ffmpeg -i rtsp://admin:admin@192.168.0.5:554 -tune zerolatency -crf 18 m2.mp4
+
+
+
+
+
+
+
+[
+  {
+    "name": "28-051780e2c0ff",
+    "sensorid": "28-051780e2c0ff",
+    "pinup": 12,
+    "pindown": 16,
+    "min": 0,
+    "max": 0
+  },
+  {
+    "name": "28-0417824765ff",
+    "sensorid": "28-0417824765ff",
+    "pinup": 20,
+    "pindown": 21,
+    "min": 29,
+    "max": 30
+  }
+]
+
+
+
+
+# /etc/mongodb.conf
+# minimal config file (old style)
+# Run mongod --help to see a list of options
+
+bind_ip = 127.0.0.1
+quiet = true
+dbpath = /var/lib/mongodb
+logpath = /var/log/mongodb/mongod.log
+logappend = true
+storageEngine = mmapv1
+
+
+cd /lib/systemd/system
+sudo nano mongodb.service
+
+SELECT price.id, price.tovar_id, price.magazin_id, price.prc, price.t_created, price.user_id FROM price
+WHERE price.magazin_id IN (SELECT magazin.id FROM magazin WHERE user_id = 60 )
+AND price.tovar_id = 119
+AND price.t_created IN
+  (SELECT MAX( lastprice.t_created )
+   FROM price AS lastprice
+   WHERE lastprice.magazin_id = price.magazin_id AND lastprice.tovar_id = 119)
+
+SELECT price.id, price.tovar_id, price.magazin_id, price.prc, price.t_created, price.user_id FROM price
+WHERE price.magazin_id IN (SELECT magazin.id FROM magazin WHERE user_id = 60 )
+AND price.tovar_id in (119,120)
+AND price.t_created IN
+  (SELECT MAX( lastprice.t_created )
+   FROM price AS lastprice
+   WHERE lastprice.magazin_id = price.magazin_id AND lastprice.tovar_id in (119,120))
+
+   SELECT p1.magazin_id, p1.prc, p1.t_created, p1.user_id
+   FROM price p1
+   JOIN magazin
+   ON magazin.id = price.magazin_id
+   AND magazin.user_id = 60
+   LEFT JOIN price p2
+   ON p2.tovar_id = p1.tovar_id
+   AND p2.magazin_id = p1.magazin_id
+   AND p2.t_created > p1.t_created
+   WHERE p1.tovar_id = 1 AND p2.magazin_id IS NULL;
+
+
+set sql_mode='';
+
+UPDATE price SET l = 2 WHERE id =( SELECT id FROM ( select * from price ) as x WHERE magazin_id = 160 AND tovar_id = 120 ORDER BY id DESC LIMIT 1 )
+
+
+#SET
+  #sql_mode = '';
+UPDATE
+  price
+SET
+  l = 0
+WHERE
+  id =(
+  SELECT
+    id
+  FROM
+     (
+         select * from price
+      ) as x
+  WHERE
+   user_id=60 AND magazin_id = 160 AND tovar_id = 120
+  ORDER BY
+    id DESC
+  LIMIT 1
+)
+
+RowDataPacket { i: 1328200, m: 5, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328205, m: 6, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328206, m: 7, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328201, m: 8, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328204, m: 9, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328202, m: 10, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328203, m: 11, d: 500, u: 70, p: '14500.00' }
+RowDataPacket { i: 1328208, m: 12, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328212, m: 13, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328207, m: 14, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328209, m: 15, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328194, m: 16, d: 500, u: 70, p: '5100.00' }
+RowDataPacket { i: 1328190, m: 17, d: 500, u: 70, p: '3000.00' }
+RowDataPacket { i: 1328192, m: 18, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328187, m: 19, d: 500, u: 70, p: '1450.00' }
+RowDataPacket { i: 1328188, m: 20, d: 500, u: 70, p: '1550.00' }
+RowDataPacket { i: 1328195, m: 21, d: 500, u: 70, p: '2000.00' }
+RowDataPacket { i: 1328193, m: 22, d: 500, u: 70, p: '2000.00' }
+RowDataPacket { i: 1328217, m: 23, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328218, m: 24, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328219, m: 25, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328220, m: 26, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328221, m: 27, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328198, m: 28, d: 500, u: 70, p: '1900.00' }
+RowDataPacket { i: 1328215, m: 29, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328216, m: 30, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328235, m: 31, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328231, m: 32, d: 500, u: 70, p: '1100.00' }
+RowDataPacket { i: 1328236, m: 33, d: 500, u: 70, p: '2550.00' }
+RowDataPacket { i: 1328237, m: 34, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328229, m: 35, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328227, m: 36, d: 500, u: 70, p: '1200.00' }
+RowDataPacket { i: 1328115, m: 37, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328159, m: 37, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328106, m: 38, d: 500, u: 70, p: '4400.00' }
+RowDataPacket { i: 1328150, m: 38, d: 500, u: 70, p: '4400.00' }
+RowDataPacket { i: 1328105, m: 39, d: 500, u: 70, p: '6500.00' }
+RowDataPacket { i: 1328149, m: 39, d: 500, u: 70, p: '6500.00' }
+RowDataPacket { i: 1328116, m: 40, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328160, m: 40, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328104, m: 41, d: 500, u: 70, p: '11500.00' }
+RowDataPacket { i: 1328148, m: 41, d: 500, u: 70, p: '11500.00' }
+RowDataPacket { i: 1328103, m: 42, d: 500, u: 70, p: '10800.00' }
+RowDataPacket { i: 1328147, m: 42, d: 500, u: 70, p: '10800.00' }
+RowDataPacket { i: 1328117, m: 43, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328161, m: 43, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328118, m: 44, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328162, m: 44, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328146, m: 45, d: 500, u: 70, p: '19200.00' }
+RowDataPacket { i: 1328102, m: 45, d: 500, u: 70, p: '19200.00' }
+RowDataPacket { i: 1328163, m: 46, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328119, m: 46, d: 500, u: 70, p: '1400.00' }
+RowDataPacket { i: 1328101, m: 47, d: 500, u: 70, p: '21600.00' }
+RowDataPacket { i: 1328145, m: 47, d: 500, u: 70, p: '21600.00' }
+RowDataPacket { i: 1328152, m: 48, d: 500, u: 70, p: '570.00' }
+RowDataPacket { i: 1328108, m: 48, d: 500, u: 70, p: '570.00' }
+RowDataPacket { i: 1328157, m: 49, d: 500, u: 70, p: '4740.00' }
+RowDataPacket { i: 1328113, m: 49, d: 500, u: 70, p: '4740.00' }
+RowDataPacket { i: 1328151, m: 50, d: 500, u: 70, p: '550.00' }
+RowDataPacket { i: 1328107, m: 50, d: 500, u: 70, p: '550.00' }
+RowDataPacket { i: 1328112, m: 54, d: 500, u: 70, p: '2400.00' }
+RowDataPacket { i: 1328156, m: 54, d: 500, u: 70, p: '2400.00' }
+RowDataPacket { i: 1328154, m: 55, d: 500, u: 70, p: '14160.00' }
+RowDataPacket { i: 1328110, m: 55, d: 500, u: 70, p: '14160.00' }
+RowDataPacket { i: 1328155, m: 56, d: 500, u: 70, p: '12300.00' }
+RowDataPacket { i: 1328111, m: 56, d: 500, u: 70, p: '12300.00' }
+RowDataPacket { i: 1328109, m: 57, d: 500, u: 70, p: '18480.00' }
+RowDataPacket { i: 1328153, m: 57, d: 500, u: 70, p: '18480.00' }
+RowDataPacket { i: 1328100, m: 59, d: 500, u: 70, p: '9500.00' }
+RowDataPacket { i: 1328144, m: 59, d: 500, u: 70, p: '9500.00' }
+RowDataPacket { i: 1328168, m: 60, d: 500, u: 70, p: '2100.00' }
+RowDataPacket { i: 1328124, m: 60, d: 500, u: 70, p: '2100.00' }
+RowDataPacket { i: 1328169, m: 61, d: 500, u: 70, p: '2500.00' }
+RowDataPacket { i: 1328125, m: 61, d: 500, u: 70, p: '2500.00' }
+RowDataPacket { i: 1328170, m: 62, d: 500, u: 70, p: '2100.00' }
+RowDataPacket { i: 1328126, m: 62, d: 500, u: 70, p: '2100.00' }
+RowDataPacket { i: 1328171, m: 63, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328127, m: 63, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328128, m: 64, d: 500, u: 70, p: '4600.00' }
+RowDataPacket { i: 1328172, m: 64, d: 500, u: 70, p: '4600.00' }
+RowDataPacket { i: 1328131, m: 65, d: 500, u: 70, p: '3000.00' }
+RowDataPacket { i: 1328175, m: 65, d: 500, u: 70, p: '3000.00' }
+RowDataPacket { i: 1328176, m: 66, d: 500, u: 70, p: '2900.00' }
+RowDataPacket { i: 1328132, m: 66, d: 500, u: 70, p: '2900.00' }
+RowDataPacket { i: 1328133, m: 67, d: 500, u: 70, p: '5400.00' }
+RowDataPacket { i: 1328177, m: 67, d: 500, u: 70, p: '5400.00' }
+RowDataPacket { i: 1328134, m: 68, d: 500, u: 70, p: '4600.00' }
+RowDataPacket { i: 1328178, m: 68, d: 500, u: 70, p: '4600.00' }
+RowDataPacket { i: 1328179, m: 69, d: 500, u: 70, p: '4400.00' }
+RowDataPacket { i: 1328135, m: 69, d: 500, u: 70, p: '4400.00' }
+RowDataPacket { i: 1328136, m: 70, d: 500, u: 70, p: '2350.00' }
+RowDataPacket { i: 1328180, m: 70, d: 500, u: 70, p: '2350.00' }
+RowDataPacket { i: 1328137, m: 71, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328181, m: 71, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328138, m: 72, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328182, m: 72, d: 500, u: 70, p: '1000.00' }
+RowDataPacket { i: 1328183, m: 73, d: 500, u: 70, p: '1100.00' }
+RowDataPacket { i: 1328139, m: 73, d: 500, u: 70, p: '1100.00' }
+RowDataPacket { i: 1328184, m: 74, d: 500, u: 70, p: '2100.00' }
+RowDataPacket { i: 1328140, m: 74, d: 500, u: 70, p: '2100.00' }
+RowDataPacket { i: 1328186, m: 75, d: 500, u: 70, p: '2500.00' }
+RowDataPacket { i: 1328142, m: 75, d: 500, u: 70, p: '2500.00' }
+RowDataPacket { i: 1328141, m: 76, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328185, m: 76, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328238, m: 77, d: 500, u: 70, p: '1300.00' }
+RowDataPacket { i: 1328228, m: 78, d: 500, u: 70, p: '1100.00' }
+RowDataPacket { i: 1328196, m: 79, d: 500, u: 70, p: '1900.00' }
+RowDataPacket { i: 1328143, m: 81, d: 500, u: 70, p: '780.00' }
+RowDataPacket { i: 1328099, m: 81, d: 500, u: 70, p: '780.00' }
+RowDataPacket { i: 1328098, m: 82, d: 500, u: 70, p: '400.00' }
+RowDataPacket { i: 1328230, m: 83, d: 500, u: 70, p: '2300.00' }
+RowDataPacket { i: 1328158, m: 84, d: 500, u: 70, p: '415.00' }
+RowDataPacket { i: 1328114, m: 84, d: 500, u: 70, p: '415.00' }
+RowDataPacket { i: 1328167, m: 85, d: 500, u: 70, p: '900.00' }
+RowDataPacket { i: 1328123, m: 85, d: 500, u: 70, p: '900.00' }
+RowDataPacket { i: 1328166, m: 86, d: 500, u: 70, p: '900.00' }
+RowDataPacket { i: 1328122, m: 86, d: 500, u: 70, p: '900.00' }
+RowDataPacket { i: 1328120, m: 87, d: 500, u: 70, p: '415.00' }
+RowDataPacket { i: 1328164, m: 87, d: 500, u: 70, p: '415.00' }
+RowDataPacket { i: 1328121, m: 88, d: 500, u: 70, p: '415.00' }
+RowDataPacket { i: 1328165, m: 88, d: 500, u: 70, p: '415.00' }
+RowDataPacket { i: 1328197, m: 89, d: 500, u: 70, p: '1900.00' }
+RowDataPacket { i: 1328189, m: 90, d: 500, u: 70, p: '1550.00' }
+RowDataPacket { i: 1328199, m: 93, d: 500, u: 70, p: '1430.00' }
+RowDataPacket { i: 1328191, m: 94, d: 500, u: 70, p: '1650.00' }
+RowDataPacket { i: 1328233, m: 97, d: 500, u: 70, p: '470.00' }
+RowDataPacket { i: 1328214, m: 98, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328234, m: 99, d: 500, u: 70, p: '800.00' }
+RowDataPacket { i: 1328232, m: 100, d: 500, u: 70, p: '650.00' }
+RowDataPacket { i: 1328226, m: 103, d: 500, u: 70, p: '8800.00' }
+RowDataPacket { i: 1328173, m: 107, d: 500, u: 70, p: '15400.00' }
+RowDataPacket { i: 1328129, m: 107, d: 500, u: 70, p: '15400.00' }
+RowDataPacket { i: 1328174, m: 108, d: 500, u: 70, p: '8200.00' }
+RowDataPacket { i: 1328130, m: 108, d: 500, u: 70, p: '8200.00' }
+RowDataPacket { i: 1328222, m: 109, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328225, m: 110, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328224, m: 111, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328223, m: 112, d: 500, u: 70, p: '11000.00' }
+RowDataPacket { i: 1328211, m: 113, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328210, m: 115, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328213, m: 116, d: 500, u: 70, p: '7800.00' }
+RowDataPacket { i: 1328242, m: 117, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328243, m: 118, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328241, m: 119, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328240, m: 120, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328239, m: 121, d: 500, u: 70, p: '2750.00' }
+RowDataPacket { i: 1328244, m: 122, d: 500, u: 70, p: '2750.00' }
+
+
+
+
+1554098544
+1554098544
+
+
+select * from price where user_id =60 and l=1 group by magazin_id, tovar_id;
+
+
+
+E/respulkirimmagazin: {"bool":true,"content":[{"n":1533663832326,"u":60,"d":113,"k":[{"i":132,"u":60,"m":1,"e":1,"s":"424500","r":"shu kungi molli puli","px":1,"vz":0,"d":113}],"q":[]},{"n":1533663957975,"u":60,"d":169,"k":[{"i":133,"u":60,"m":1,"e":1,"s":"100000","r":"astatkadan","px":1,"vz":0,"d":169}],"q":[]},{"n":1533666000480,"u":60,"d":89,"k":[{"i":134,"u":60,"m":1,"e":1,"s":"131700","r":"1.4 ga to'g'rilab qo'ydik","px":1,"vz":0,"d":89}],"q":[]},{"n":1533670959788,"u":60,"d":162,"k":[{"i":135,"u":60,"m":1,"e":1,"s":"903800","r":"","px":1,"vz":0,"d":162}],"q":[]},{"n":1533670991784,"u":60,"d":168,"k":[{"i":136,"u":60,"m":1,"e":1,"s":"60000","r":"","px":1,"vz":0,"d":168}],"q":[]},{"n":1533671027531,"u":60,"d":170,"k":[{"i":137,"u":60,"m":1,"e":1,"s":"400000","r":"","px":1,"vz":0,"d":170}],"q":[]},{"n":1533962856264,"u":60,"d":926,"k":[{"i":185,"u":60,"m":2,"e":2,"s":"437400","r":"","px":1,"vz":0,"d":926}],"q":[]},{"n":1533962885592,"u":60,"d":926,"k":[{"i":186,"u":60,"m":1,"e":1,"s":"521200","r":"","px":1,"vz":0,"d":926}],"q":[]},{"n":1534395593044,"u":60,"d":926,"k":[{"i":267,"u":60,"m":2,"e":2,"s":"681000","r":"","px":1,"vz":0,"d":926}],"q":[]},{"n":1534395626088,"u":60,"d":171,"k":[{"i":268,"u":60,"m":2,"e":2,"s":"328200","r":"200 puli qoldi","px":1,"vz":0,"d":171}],"q":[]},{"n":1534395656209,"u":60,"d":135,"k":[{"i":269,"u":60,"m":2,"e":2,"s":"625000","r":"","px":1,"vz":0,"d":135}],"q":[]},{"n":1534395688009,"u":60,"d":926,"k":[{"i":270,"u":60,"m":1,"e":1,"s":"269500","r":"","px":1,"vz":0,"d":926}],"q":[]},{"n":1534580492352,"u":60,"d":87,"k":[{"i":288,"u":60,"m":2,"e":2,"s":"0","r":"shu kungi","px":1,"vz":0,"d":87}],"q":[]},{"n":1534580621041,"u":60,"d":174,"k":[{"i":289,"u":60,"m":2,"e":2,"s":"0","r":"eski astatka","px":1,"vz":0,"d":174}],"q":[]},{"n":1534580697575,"u":60,"d":94,"k":[{"i":290,"u":60,"m":2,"e":2,"s":"0","r":"","px":1,"vz":0,"d":94}],"q":[]},{"n":1534580713733,"u":60,"d":129,"k":[{"i":291,"u":60,"m":2,"e":2,"s":"0","r":"","px":1,"vz":0,"d":129}],"q":[]},{"n":1534580735631,"u":60,"d":36,"k":[{"i":292,"u":60,"m":2,"e":2,"s":"0","r":"","px":1,"vz":0,"d":36}],"q":[]},{"n":1534580760900,"u":60,"d":0,"k":[],"q":[{"i":293,"s":"22300","r":"gaz"}]},{"n":1534615741821,"u":60,"d":169,"k":[{"i":303,"u":60,"m":1,"e":1,"s":"200000","r":"","px":1,"vz":0,"d":169}],"q":[]},{"n":1534617631902,"u":60,"d":170,"k":[{"i":304,"u":60,"m":1,"e":1,"s":"150000","r":"","px":1,"vz":0,"d":170}],"q":[]},{"n":1534747929832,"u":60,"d":130,"k":[{"i":317,"u":60,"m":1,"e":1,"s":"196400","r":"","px":1,"vz":0,"d":130}],"q":[]},{"n":1534747956983,"u":60,"d":926,"k":[{"i":318,"u":60,"m":1,"e":1,"s":"464600","r":"","px":1,"vz":0,"d":926}],"q":[]},{"n":1534764988067,"u":60,"d":94,"k":[{"i":319,"u":60,"m":2,"e":2,"s":"1113600","r":"","px":1,"vz":0,"d":94}],"q":[]},{"n":1534917204568,"u":60,"d":119,"k":[{"i":323,"u":60,"m":2,"e":2,"s":"1311000","r":"20.08","px":1,"vz":0,"d":119}],"q":[]},{"n":1534917323771,"u":60,"d":926,"k":[{"i":324,"u":60,"m":1,"e":1,"s":"0","r":"20.08","px":1,"vz":0,"d":926},{"i":325,"u":60,"m":2,"e":2,"s":"363600","r":"20.08","px":1,"vz":0,"d":926}],"q":[]},{"n":1534918353570,"u":60,"d":145,"k":[{"i":326,"u":60,"m":1,"e":1,"s":"793800","r":"20.08","px":1,"vz":0,"d":145},{"i":327,"u":60,"m":3,"e":3,"s":"86400","r":"20.08","px":1,"vz":0,"d":145}],"q":[]},{"n":1534918440899,"u":60,"d":131,"k":[{"i":328,"u":60,"m":1,"e":1,"s":"670900","r":"20.08","px":1,"vz":0,"d":131}],"q":[]},{"n":1534918488491,"u":60,"d":122,"k":[{"i":329,"u":60,"m":1,"e":1,"s":"2000000","r":"20.08","px":1,"vz":0,"d":122}],"q":[]},{"n":1534918534909,"u":60,"d":130,"k":[{"i":330,"u":60,"m":1,"e":1,"s":"0","r":"20.08","px":1,"vz":0,"d":130}],"q":[]},{"n":1534918613550,"u":60,"d":115,"k":[{"i":331,"u":60,"m":1,"e":1,"s":"0","r":"20.08 buda bello yo'q edi","px":1,"vz":0,"d":115}],"q":[]},{"n":1534939850055,"u":60,"d":35,"k":[{"i":332,"u":60,"m":1,"e":1,"s":"0","r":"","px":1,"vz":0,"d":35}],"q":[]},{"n":1534939909619,"u":60,"d":35,"k":[{"i":333,"u":60,"m":1,"e":1,"s":"0","r":"","px":0,"vz":1,"d":35}],"q":[]},{"n":1534939953939,"u"
+
+
+E/pk_chek_ns...res: [{"n":1533663832326,"d":113,"k":[{"i":132,"d":113,"m":1,"s":"424500","r":"shu kungi molli puli","px":1,"vz":0,"n":1533663832326}],"q":[]},{"n":1533663957975,"d":169,"k":[{"i":133,"d":169,"m":1,"s":"100000","r":"astatkadan","px":1,"vz":0,"n":1533663957975}],"q":[]},{"n":1533666000480,"d":89,"k":[{"i":134,"d":89,"m":1,"s":"131700","r":"1.4 ga to'g'rilab qo'ydik","px":1,"vz":0,"n":1533666000480}],"q":[]},{"n":1533670959788,"d":162,"k":[{"i":135,"d":162,"m":1,"s":"903800","r":"","px":1,"vz":0,"n":1533670959788}],"q":[]},{"n":1533670991784,"d":168,"k":[{"i":136,"d":168,"m":1,"s":"60000","r":"","px":1,"vz":0,"n":1533670991784}],"q":[]},{"n":1533671027531,"d":170,"k":[{"i":137,"d":170,"m":1,"s":"400000","r":"","px":1,"vz":0,"n":1533671027531}],"q":[]},{"n":1533962856264,"d":926,"k":[{"i":185,"d":926,"m":2,"s":"437400","r":"","px":1,"vz":0,"n":1533962856264}],"q":[]},{"n":1533962885592,"d":926,"k":[{"i":186,"d":926,"m":1,"s":"521200","r":"","px":1,"vz":0,"n":1533962885592}],"q":[]},{"n":1534395593044,"d":926,"k":[{"i":267,"d":926,"m":2,"s":"681000","r":"","px":1,"vz":0,"n":1534395593044}],"q":[]},{"n":1534395626088,"d":171,"k":[{"i":268,"d":171,"m":2,"s":"328200","r":"200 puli qoldi","px":1,"vz":0,"n":1534395626088}],"q":[]},{"n":1534395656209,"d":135,"k":[{"i":269,"d":135,"m":2,"s":"625000","r":"","px":1,"vz":0,"n":1534395656209}],"q":[]},{"n":1534395688009,"d":926,"k":[{"i":270,"d":926,"m":1,"s":"269500","r":"","px":1,"vz":0,"n":1534395688009}],"q":[]},{"n":1534580492352,"d":87,"k":[{"i":288,"d":87,"m":2,"s":"0","r":"shu kungi","px":1,"vz":0,"n":1534580492352}],"q":[]},{"n":1534580621041,"d":174,"k":[{"i":289,"d":174,"m":2,"s":"0","r":"eski astatka","px":1,"vz":0,"n":1534580621041}],"q":[]},{"n":1534580697575,"d":94,"k":[{"i":290,"d":94,"m":2,"s":"0","r":"","px":1,"vz":0,"n":1534580697575}],"q":[]},{"n":1534580713733,"d":129,"k":[{"i":291,"d":129,"m":2,"s":"0","r":"","px":1,"vz":0,"n":1534580713733}],"q":[]},{"n":1534580735631,"d":36,"k":[{"i":292,"d":36,"m":2,"s":"0","r":"","px":1,"vz":0,"n":1534580735631}],"q":[]},{"n":1534580760900,"d":0,"k":[],"q":[{"i":293,"d":0,"m":0,"s":"22300","r":"gaz","px":0,"vz":0,"n":1534580760900}]},{"n":1534615741821,"d":169,"k":[{"i":303,"d":169,"m":1,"s":"200000","r":"","px":1,"vz":0,"n":1534615741821}],"q":[]},{"n":1534617631902,"d":170,"k":[{"i":304,"d":170,"m":1,"s":"150000","r":"","px":1,"vz":0,"n":1534617631902}],"q":[]},{"n":1534747929832,"d":130,"k":[{"i":317,"d":130,"m":1,"s":"196400","r":"","px":1,"vz":0,"n":1534747929832}],"q":[]},{"n":1534747956983,"d":926,"k":[{"i":318,"d":926,"m":1,"s":"464600","r":"","px":1,"vz":0,"n":1534747956983}],"q":[]},{"n":1534764988067,"d":94,"k":[{"i":319,"d":94,"m":2,"s":"1113600","r":"","px":1,"vz":0,"n":1534764988067}],"q":[]},{"n":1534917204568,"d":119,"k":[{"i":323,"d":119,"m":2,"s":"1311000","r":"20.08","px":1,"vz":0,"n":1534917204568}],"q":[]},{"n":1534917323771,"d":926,"k":[{"i":324,"d":926,"m":1,"s":"0","r":"20.08","px":1,"vz":0,"n":1534917323771},{"i":325,"d":926,"m":2,"s":"363600","r":"20.08","px":1,"vz":0,"n":1534917323771}],"q":[]},{"n":1534918353570,"d":145,"k":[{"i":326,"d":145,"m":1,"s":"793800","r":"20.08","px":1,"vz":0,"n":1534918353570},{"i":327,"d":145,"m":3,"s":"86400","r":"20.08","px":1,"vz":0,"n":1534918353570}],"q":[]},{"n":1534918440899,"d":131,"k":[{"i":328,"d":131,"m":1,"s":"670900","r":"20.08","px":1,"vz":0,"n":1534918440899}],"q":[]},{"n":1534918488491,"d":122,"k":[{"i":329,"d":122,"m":1,"s":"2000000","r":"20.08","px":1,"vz":0,"n":1534918488491}],"q":[]},{"n":1534918534909,"d":130,"k":[{"i":330,"d":130,"m":1,"s":"0","r":"20.08","px":1,"vz":0,"n":1534918534909}],"q":[]},{"n":1534918613550,"d":115,"k":[{"i":331,"d":115,"m":1,"s":"0","r":"20.08 buda bello yo'q edi","px":1,"vz":0,"n":1534918613550}],"q":[]},{"n":1534939850055,"d":35,"k":[{"i":332,"d":35,"m":1,"s":"0","r":"","px":1,"vz":0,"n":1534939850055}],"q":[]},{"n":1534939909619,"d":35,"k":[{"i":333,"d":35,"m":1,"s":"0","r":"","px":0,"vz":1,"n":1534939909619}],"q":[]},{"n":1534939953939,"d":35,"k":[{"i":334,"d":35,"m":1,"s":"-294
+
+
+
+Packages to install:
+- NDK (ndk-bundle)
+- Android Emulator (emulator)
+- Android SDK Platform-Tools (platform-tools)
+
+Preparing "Install NDK (revision: 19.2.5345600)".
+Downloading http://dl.google.com/android/repository/sdk-ndk-5063045-5345600-linux-64-patch.jar
+"Install NDK (revision: 19.2.5345600)" ready.
+Preparing "Install Android Emulator (revision: 28.0.25)".
+Downloading http://dl.google.com/android/repository/sdk-generic-2c14c406a9cda89623f626a18d5906b19b9e05b4-1c5f0bddcf14caf2a0b524246f20b251302fb779-linux-patch.jar
+"Install Android Emulator (revision: 28.0.25)" ready.
+Preparing "Install Android SDK Platform-Tools (revision: 28.0.2)".
+Downloading http://dl.google.com/android/repository/platform-tools_r28.0.2-linux.zip
+"Install Android SDK Platform-Tools (revision: 28.0.2)" ready.
+Running patcher...
+Patch applied.
+Done
+"Install NDK (revision: 19.2.5345600)" complete.
+"Install NDK (revision: 19.2.5345600)" finished.
+Running patcher...
+Patch applied.
+Done
+"Install Android Emulator (revision: 28.0.25)" complete.
+"Install Android Emulator (revision: 28.0.25)" finished.
+Stopping ADB...
+Installing Android SDK Platform-Tools in /home/vx/android-sdk-linux/platform-tools
+"Install Android SDK Platform-Tools (revision: 28.0.2)" complete.
+"Install Android SDK Platform-Tools (revision: 28.0.2)" finished.
+
+
+
+
+Error: Cannot read property 'admins' of undefined
+event:  TypeError: Cannot read property 'admins' of undefined
+    at /root/home/node_projects/stock/app.js:2463:50
+    at Array.forEach (<anonymous>)
+    at Query.<anonymous> (/root/home/node_projects/stock/app.js:2459:34)
+    at Query.<anonymous> (/root/home/node_projects/stock/node_modules/mysql/lib/Connection.js:502:10)
+    at Query._callback (/root/home/node_projects/stock/node_modules/mysql/lib/Connection.js:468:16)
+    at Query.Sequence.end (/root/home/node_projects/stock/node_modules/mysql/lib/protocol/sequences/Sequence.js:83:24)
+    at Query._handleFinalResultPacket (/root/home/node_projects/stock/node_modules/mysql/lib/protocol/sequences/Query.js:139:8)
+    at Query.EofPacket (/root/home/node_projects/stock/node_modules/mysql/lib/protocol/sequences/Query.js:123:8)
+    at Protocol._parsePacket (/root/home/node_projects/stock/node_modules/mysql/lib/protocol/Protocol.js:278:23)
+    at Parser.write (/root/home/node_pr
+
+
+
+
+////////+++++++++++////////////
+
+SELECT
+  magazin.id AS d,
+  IFNULL(
+    SUM(chiqim.soni * price.prc),
+    0
+  ) AS s
+FROM
+  `magazin`
+LEFT JOIN
+  chiqim ON chiqim.magazin_id = magazin.id
+LEFT JOIN
+  price ON chiqim.price_id = price.id
+WHERE
+  magazin.user_id = 60
+GROUP BY
+  magazin.id
+ORDER BY
+  `d` ASC
+
+//////++++++++++////////////
+
+SELECT
+  magazin.id AS d,
+  IFNULL(SUM(pk.summa),
+  0) AS s
+FROM
+  `magazin`
+LEFT JOIN
+  pulkirim pk ON pk.magazin_id = magazin.id
+WHERE
+  magazin.user_id = 60
+GROUP BY
+  magazin.id
+ORDER BY
+  `d` ASC
+///////++++++++++///////////////
+
+
+
+SELECT
+  magazin.id AS d,
+  magazin.nomi,
+  IFNULL(SUM(pk.summa),0) AS summa_pk,
+
+  IFNULL(SUM(chiqim.soni * price.prc),0) AS summa_ch,
+
+  (IFNULL(SUM(pk.summa),0)  - IFNULL(SUM((chiqim.soni * price.prc)),0) ) as bal
+
+FROM
+  `magazin`
+
+LEFT
+JOIN
+  pulkirim pk ON pk.magazin_id = magazin.id
+
+LEFT JOIN
+  chiqim ON chiqim.magazin_id = magazin.id
+LEFT JOIN
+  price ON chiqim.price_id = price.id  and price.magazin_id=magazin.id
+
+where magazin.user_id=60
+
+GROUP BY
+  magazin.id
+/////////////////////
+
+SELECT
+  magazin.id AS d,
+  magazin.nomi,
+  IFNULL(SUM(pk.summa),0) AS  summa_pk,
+
+  IFNULL(SUM(chiqim.soni * price.prc),0) AS  summa_ch
+
+ ,(IFNULL(SUM(pk.summa),0)  - IFNULL(SUM((chiqim.soni * price.prc)),0) ) as bal
+
+ # summma_pk-summa_ch
+
+FROM
+  magazin #mg
+
+LEFT
+JOIN
+  pulkirim pk ON pk.magazin_id = magazin.id
+
+LEFT JOIN
+  chiqim ON chiqim.magazin_id = magazin.id
+LEFT JOIN
+  price ON chiqim.price_id = price.id
+
+where magazin.user_id=60
+
+GROUP BY
+  magazin.id
+ORDER BY `magazin`.`nomi` ASC
+
+
+
+{ user_id: 60,  magazin_id: 1088,  chiqim: [ { tovar_id: 46, soni: 1, price_id: 1398454 } ] }
+no, b
+
+====================ostatok==============
+
+SET
+  sql_mode = '';
+TRUNCATE
+  skladost;
+insert into skladost (tovar_id,ost)
+SELECT
+  p.id,
+  #p.parent_id,
+  COALESCE(SUM(qty),
+  0) AS soni
+  #,  cd.ts -86400000
+FROM
+  tovarnomlari p
+#LEFT JOIN  (  SELECT    ROUND(      UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts    ) AS cd ON 1
+  LEFT JOIN
+    (
+    SELECT
+      st.tovar_id,
+      st.soni AS qty
+    FROM
+      kirim st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1
+      WHERE
+        `t_created` < cd.ts -864000
+      UNION ALL
+    SELECT
+      st.tovar_id,
+      - st.soni
+    FROM
+      chiqim st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(
+          UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+        ) AS cd ON 1
+      WHERE
+        `no` < cd.ts -86400000
+      UNION ALL
+    SELECT
+      st.tovar_id,
+      - st.soni
+    FROM
+      bulut st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(
+          UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+        ) AS cd ON 1
+      WHERE
+        `no` < cd.ts -86400000
+    ) AS T ON p.id = T.tovar_id
+  WHERE
+    parent_id != 0
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC;
+
+    >>>>>>>>>>>>>>>>>>
+    SET
+      sql_mode = '';
+    TRUNCATE
+      skladost;
+    #insert into skladost (tovar_id,ost)
+    SELECT
+      p.id,
+      #p.parent_id,
+      COALESCE(SUM(qty),
+      0) AS soni
+      ,  (cd.ts -86400000 ) as n
+    FROM
+      tovarnomlari p
+    LEFT JOIN  (  SELECT    ROUND(      UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts    ) AS cd ON 1
+      LEFT JOIN
+        (
+        SELECT
+          st.tovar_id,
+          st.soni AS qty
+        FROM
+          kirim st
+        LEFT JOIN
+          (
+          SELECT
+            ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1
+          WHERE
+            `t_created` < cd.ts -864000
+          UNION ALL
+        SELECT
+          st.tovar_id,
+          - st.soni
+        FROM
+          chiqim st
+        LEFT JOIN
+          (
+          SELECT
+            ROUND(
+              UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+            ) AS cd ON 1
+          WHERE
+            `no` < cd.ts -86400000
+          UNION ALL
+        SELECT
+          st.tovar_id,
+          - st.soni
+        FROM
+          bulut st
+        LEFT JOIN
+          (
+          SELECT
+            ROUND(
+              UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+            ) AS cd ON 1
+          WHERE
+            `no` < cd.ts -86400000*2
+        ) AS T ON p.id = T.tovar_id
+      WHERE
+        parent_id != 0
+      GROUP BY
+        p.id,
+        p.title
+      ORDER BY
+        `p`.`id` ASC;
+
+    ============
+
+SET
+  sql_mode = '';
+#TRUNCATE  skladost2;
+
+#insert into skladost2 (tovar_id,ost)
+
+SELECT
+  p.id,
+
+
+  #p.parent_id,
+  COALESCE(SUM(qty),
+  0) AS soni
+  #,  cd.ts-86400000
+FROM
+  tovarnomlari p
+LEFT JOIN
+  (
+  SELECT
+    ROUND(
+      UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+    ) AS cd ON 1
+  LEFT JOIN
+    (
+    SELECT
+      st.tovar_id,
+      st.soni AS qty
+    FROM
+      kirim st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1
+      WHERE
+        `t_created` > cd.ts-864000
+      UNION ALL
+    SELECT
+      st.tovar_id,
+      - st.soni
+    FROM
+      chiqim st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(
+          UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+        ) AS cd ON 1
+      WHERE
+        `no` > cd.ts-86400000
+      UNION ALL
+    SELECT
+      st.tovar_id,
+      - st.soni
+    FROM
+      bulut st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(
+          UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+        ) AS cd ON 1
+      WHERE
+        `no` > cd.ts-86400000
+    ) AS T ON p.id = T.tovar_id
+  WHERE
+    parent_id != 0
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC;
+
+============current==========
+SET
+  sql_mode = '';
+
+SELECT
+  p.id,
+  p.parent_id,
+  (COALESCE(SUM(qty),0)+skladost.ost) AS soni,
+
+  (cd.ts -86400000) AS n
+FROM
+  tovarnomlari p
+LEFT JOIN
+  (
+  SELECT
+    ROUND(
+      UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+    ) AS cd ON 1
+  LEFT JOIN
+    (
+    SELECT
+      st.tovar_id,
+      st.soni AS qty
+    FROM
+      kirim st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1
+      WHERE
+        `t_created` >= cd.ts -864000
+      UNION ALL
+    SELECT
+      st.tovar_id,
+      - st.soni
+    FROM
+      chiqim st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(
+          UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+        ) AS cd ON 1
+      WHERE
+        `no` >= cd.ts -86400000
+      UNION ALL
+    SELECT
+      st.tovar_id,
+      - st.soni
+    FROM
+      bulut st
+    LEFT JOIN
+      (
+      SELECT
+        ROUND(
+          UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts
+        ) AS cd ON 1
+      WHERE
+        `no` >= cd.ts -86400000
+    ) AS T ON p.id = T.tovar_id
+
+    left join skladost on p.id=skladost.tovar_id
+  WHERE
+    parent_id != 0
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC;
+
+
+
+====fact====================
+
+SET
+  sql_mode = '';
+
+#TRUNCATE  skladost;
+#INSERT INTO  skladost(tovar_id,  ost,  n)
+
+SELECT
+  p.id,
+  COALESCE(SUM(qty),
+  0) AS soni
+  #,  (cd.ts -86400000) AS n
+
+FROM
+  tovarnomlari p
+#LEFT JOIN  (  SELECT    ROUND(      UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts    ) AS cd ON 1
+  LEFT JOIN
+    ( SELECT st.tovar_id,  st.soni AS qty,b
+    FROM kirim st
+    LEFT JOIN  ( SELECT  ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1  WHERE `t_created` < cd.ts -864000
+
+      UNION ALL
+    SELECT st.tovar_id, - st.soni,b
+    FROM chiqim st
+    LEFT JOIN  ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts  ) AS cd ON 1   WHERE `no` < cd.ts -86400000
+
+
+      UNION ALL
+    SELECT st.tovar_id, - st.soni,b
+    FROM  bulut st
+    LEFT JOIN ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts ) AS cd ON 1  WHERE  `no` < cd.ts -86400000
+
+    ) AS T ON p.id = T.tovar_id
+
+    # LEFT JOIN chiqim ON p.id= chiqim.tovar_id
+
+  WHERE
+     parent_id != 0  #AND chiqim.b=1
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC;
+
+
+==========
+
+SET
+  sql_mode = '';
+
+#TRUNCATE  skladost;
+#INSERT INTO  skladost(tovar_id,  ost,  n)
+
+SELECT
+  p.id,
+  COALESCE(SUM(qty),  0) AS soni
+
+  #,  (cd.ts -86400000) AS n
+
+FROM
+   tovarnomlari p
+
+LEFT JOIN
+    ( SELECT st.tovar_id,  st.soni AS qty
+    FROM kirim st
+    #LEFT JOIN  ( SELECT  ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1  WHERE `t_created` < cd.ts -864000
+    #  WHERE     b =1
+
+      UNION ALL
+    SELECT st.tovar_id, - st.soni
+    FROM chiqim st
+    #LEFT JOIN  ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts  ) AS cd ON 1   WHERE `no` < (cd.ts -86400000 )
+       WHERE     b =1
+
+   #   UNION ALL
+   # SELECT st.tovar_id, - st.soni
+    #FROM  bulut st
+    #LEFT JOIN ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts ) AS cd ON 1  WHERE  `no` < (cd.ts -86400000)
+     #WHERE  b =0
+
+    ) AS T ON p.id = T.tovar_id
+
+
+  WHERE
+     parent_id != 0
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC
+    limit 300
+    ;
+
+===============
+{"m":21,"e":"Магнит","o":1,"s":6895}
+=======================
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>FACTOSTATOK OLD<<<<<<<<<<<<<<<<<<<
+
+
+SET
+  sql_mode = '';
+
+#TRUNCATE  skladost;
+#INSERT INTO  skladost(tovar_id,  ost,  n)
+
+SELECT
+  p.id,
+  COALESCE(SUM(qty),  0) AS soni
+
+  #,  (cd.ts -86400000) AS n
+
+FROM
+   tovarnomlari p
+
+LEFT JOIN
+    ( SELECT st.tovar_id,  st.soni AS qty
+    FROM kirim st
+    LEFT JOIN  ( SELECT  ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1  WHERE `t_created` < cd.ts -864000
+    #  WHERE     b =1
+
+      UNION ALL
+    SELECT st.tovar_id, - st.soni
+    FROM chiqim st
+    LEFT JOIN  ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts  ) AS cd ON 1   WHERE  st.no < (cd.ts -86400000 ) AND st.b =1
+
+   #   UNION ALL
+   # SELECT st.tovar_id, - st.soni
+    #FROM  bulut st
+    #LEFT JOIN ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts ) AS cd ON 1  WHERE  `no` < (cd.ts -86400000)
+     #WHERE  b =0
+
+    ) AS T ON p.id = T.tovar_id
+
+
+  WHERE
+     parent_id != 0
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC
+    limit 300
+    ;
+>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>FACTOSTATOK LAST<<<<<<<<<<<<<<<<<<<
+
+SET
+  sql_mode = '';
+
+#TRUNCATE  skladost;
+#INSERT INTO  skladost(tovar_id,  ost,  n)
+
+SELECT
+  p.id,
+  COALESCE(SUM(qty),  0) AS soni
+
+  #,  (cd.ts -86400000) AS n
+
+FROM
+   tovarnomlari p
+
+LEFT JOIN
+    ( SELECT st.tovar_id,  st.soni AS qty
+    FROM kirim st
+    LEFT JOIN  ( SELECT  ROUND(UNIX_TIMESTAMP(CURRENT_DATE())) AS ts) AS cd ON 1  WHERE `t_created` > cd.ts -864000
+    #  WHERE     b =1
+
+      UNION ALL
+    SELECT st.tovar_id, - st.soni
+    FROM chiqim st
+    LEFT JOIN  ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts  ) AS cd ON 1   WHERE  st.no > (cd.ts -86400000 ) AND st.b =1
+
+   #   UNION ALL
+   # SELECT st.tovar_id, - st.soni
+    #FROM  bulut st
+    #LEFT JOIN ( SELECT  ROUND( UNIX_TIMESTAMP(CURRENT_DATE()) * 1000) AS ts ) AS cd ON 1  WHERE  `no` < (cd.ts -86400000)
+     #WHERE  b =0
+
+    ) AS T ON p.id = T.tovar_id
+
+
+  WHERE
+     parent_id != 0
+  GROUP BY
+    p.id,
+    p.title
+  ORDER BY
+    `p`.`id` ASC
+    limit 300
+    ;
+>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<
+
+magazin aktivligi
+
+2019-04-27 11:25:32.047 21839-22076/ml.as E/resmagazinaktivligi: {"bool":true,"content":{"arrofchiqimobj":[{"u":60,"d":926,"n":1554798142741,"b":1},{"u":61,"d":1047,"n":1554269683221,"b":1},{"u":60,"d":3,"n":1554105162067,"b":1},{"u":60,"d":1052,"n":1554299126492,"b":1},{"u":70,"d":458,"n":1554870550378,"b":0},{"u":75,"d":592,"n":1554785197537,"b":1},{"u":79,"d":866,"n":1553087603695,"b":1},{"u":61,"d":26,"n":1554271476912,"b":1},{"u":61,"d":1019,"n":1539170567641,"b":1},{"u":61,"d":1018,"n":1554809926196,"b":1},{"u":60,"d":1051,"n":1554722809394,"b":1},{"u":60,"d":1050,"n":1540015183864,"b":1},{"u":63,"d":1049,"n":1554878452750,"b":0},{"u":73,"d":1048,"n":1550054031265,"b":1},{"u":60,"d":35,"n":1554536461141,"b":1},{"u":60,"d":36,"n":1554536532429,"b":1},{"u":60,"d":37,"n":1553663910486,"b":1},{"u":60,"d":1083,"n":1554536810246,"b":1},{"u":60,"d":39,"n":1554802392680,"b":1},{"u":60,"d":40,"n":1554708290304,"b":1},{"u":60,"d":41,"n":1553750347345,"b":1},{"u":60,"d":42,"n":1553835820193,"b":1},{"u":60,"d":43,"n":1554104203655,"b":1},{"u":60,"d":44,"n":1553144246082,"b":1},{"u":60,"d":45,"n":1549631051034,"b":1},{"u":60,"d":46,"n":1542003063856,"b":1},{"u":60,"d":47,"n":1547096821141,"b":1},{"u":60,"d":48,"n":1554099961291,"b":1},{"u":60,"d":49,"n":1554707953729,"b":1},{"u":60,"d":50,"n":1552890878356,"b":1},{"u":60,"d":51,"n":1552891104892,"b":1},{"u":60,"d":52,"n":1548744414418,"b":1},{"u":60,"d":53,"n":1552891056533,"b":1},{"u":60,"d":54,"n":1542870975302,"b":1},{"u":60,"d":57,"n":1554790428993,"b":1},{"u":60,"d":58,"n":1554721625199,"b":1},{"u":60,"d":59,"n":1553505784906,"b":1},{"u":60,"d":61,"n":1553231848945,"b":1},{"u":60,"d":62,"n":1552983823658,"b":1},{"u":60,"d":66,"n":1540618358763,"b":1},{"u":60,"d":67,"n":1554698372910,"b":1},{"u":60,"d":68,"n":1554706951970,"b":1},{"u":60,"d":69,"n":1554458693456,"b":1},{"u":60,"d":70,"n":1552885061099,"b":1},{"u":60,"d":72,"n":1554707302097,"b":1},{"u":60,"d":73,"n":1547440594747,"b":1},{"u":60,"d":74,"n":1546842046858,"b":1},{"u":60,"d":75,"n":1554892084124,"b":0},{"u":60,"d":76,"n":1554892021523,"b":0},{"u":60,"d":77,"n":1553667523758,"b":1},{"u":60,"d":78,"n":1546924891500,"b":1},{"u":60,"d":79,"n":1552984705989,"b":1},{"u":60,"d":80,"n":1537599612825,"b":1},{"u":60,"d":81,"n":1554730897141,"b":1},{"u":60,"d":82,"n":1551077107393,"b":1},{"u":60,"d":83,"n":1554807425646,"b":1},{"u":60,"d":87,"n":1554203250607,"b":1},{"u":60,"d":88,"n":1548504726397,"b":1},{"u":60,"d":89,"n":1552283754216,"b":1},{"u":60,"d":1085,"n":1554886766548,"b":0},{"u":60,"d":1086,"n":1554789628277,"b":1},{"u":60,"d":93,"n":1554447726671,"b":1},{"u":60,"d":94,"n":1554706986481,"b":1},{"u":60,"d":102,"n":1553490045517,"b":1},{"u":60,"d":103,"n":1537337282385,"b":1},{"u":60,"d":104,"n":1551853108560,"b":1},{"u":60,"d":105,"n":1553065570186,"b":1},{"u":60,"d":107,"n":1535263991727,"b":1},{"u":60,"d":108,"n":1537337022885,"b":1},{"u":60,"d":111,"n":1545979644254,"b":1},{"u":60,"d":113,"n":1533821236378,"b":1},{"u":60,"d":114,"n":1554798185124,"b":1},{"u":60,"d":115,"n":1554459056741,"b":1},{"u":60,"d":116,"n":1546926728055,"b":1},{"u":60,"d":117,"n":1554270435349,"b":1},{"u":60,"d":118,"n":1554270054369,"b":1},{"u":60,"d":119,"n":1554536633010,"b":1},{"u":60,"d":121,"n":1535178478766,"b":1},{"u":60,"d":122,"n":1554011887310,"b":1},{"u":60,"d":125,"n":1553149906670,"b":1},{"u":60,"d":127,"n":1553589448200,"b":1},{"u":60,"d":128,"n":1554459026654,"b":1},{"u":60,"d":129,"n":1554104302759,"b":1},{"u":60,"d":130,"n":1554536398998,"b":1},{"u":60,"d":131,"n":1544677793085,"b":1},{"u":60,"d":132,"n":1554807228208,"b":1},{"u":60,"d":133,"n":1554698497304,"b":1},{"u":60,"d":134,"n":1554790735772,"b":1},{"u":60,"d":136,"n":1553161447370,"b":1},{"u":60,"d":137,"n":1554698638972,"b":1},{"u":60,"d":139,"n":1553168157128,"b":1},{"u":60,"d":141,"n":1555164160078,"b":0},{"u":60,"d":146,"n":1554203385494,"b":1},{"u":60,"d":145,"n":1552631895473,"b":1},{"u":60,"d":147,"n":1554203364659,"b":1},{"u":60,"d":148,"n":1554469203430,"b":1},{"u":60,"d":149,"n":1552288157070,"b":1},{"u":60,"d":150,"n":1551416330924,"b":1},{"u":60,"d":151,"n":1545
+
+
+
+
+
+
+
+
+
+
+
+
+socket.on("resprocessedchiqim", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject resprocessedchiqim = (JSONObject) args[0];
+                Log.e("resprocessedchiqim..." + this.getClass().getSimpleName(), String.valueOf(resprocessedchiqim));//
+                try {
+                    JSONObject procch = getObjFromArray(mGlobalState.getChiqimmagazinall(), "n", resprocessedchiqim.getLong("n"));
+                    if (0 < resprocessedchiqim.getJSONArray("c").length()) {
+                        if (procch == null) {
+                            mGlobalState.getChiqimmagazinall().put(resprocessedchiqim);
+                        } else {
+                            procch.put("c", resprocessedchiqim.getJSONArray("c"));
+                        }
+                    } else {
+                        if (procch != null) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                int index = indexOfObjInArray(mGlobalState.getChiqimmagazinall(), procch);
+                                mGlobalState.getChiqimmagazinall().remove(index);
+                            }
+                        }
+                    }
+                    Intent intent = new Intent("reschiqimmagazinall");
+                    intent.putExtra("msg", String.valueOf(mGlobalState.getChiqimmagazinall()));
+                    intent.putExtra("b", true);
+                    LocalBroadcastManager.getInstance($this).sendBroadcast(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+---------------
+ socket.on("resprocessedchiqim", new Emitter.Listener() {
+             @Override
+             public void call(Object... args) {
+                 JSONObject resprocessedchiqim = (JSONObject) args[0];
+                 Log.e("resprocessedchiqim..." + this.getClass().getSimpleName(), String.valueOf(resprocessedchiqim));//
+                 try {
+                     boolean isExist = false;
+                     JSONArray getChiqimmagazinall = mGlobalState.getChiqimmagazinall();
+
+
+                     for (int i = 0; i < getChiqimmagazinall.length(); i++) {
+                         Long n = getChiqimmagazinall.getJSONObject(i).getLong("n");
+
+                         if (n.equals(resprocessedchiqim.getLong("n"))) {
+ //                            if (resprocessedchiqim.getJSONObject("c").has("c")) {
+                             if (resprocessedchiqim.getJSONArray("c").length()>0) {
+
+ //                                Log.e("has C..", String.valueOf(resprocessedchiqim.getJSONObject("c")));//
+
+                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                     getChiqimmagazinall.remove(i);
+                                     getChiqimmagazinall.put(i, resprocessedchiqim );
+                                     Intent intent = new Intent("reschiqimmagazinall");
+                                     intent.putExtra("msg", String.valueOf(mGlobalState.getChiqimmagazinall()));
+                                     intent.putExtra("b", true);
+                                     LocalBroadcastManager.getInstance($this).sendBroadcast(intent);
+                                 }
+                             } else {
+                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                     getChiqimmagazinall.remove(i);
+                                     Intent intent = new Intent("reschiqimmagazinall");
+                                     intent.putExtra("msg", String.valueOf(mGlobalState.getChiqimmagazinall()));
+                                     intent.putExtra("b", true);
+                                     LocalBroadcastManager.getInstance($this).sendBroadcast(intent);
+                                 }
+                             }
+                             isExist = true;
+                             break;
+                         }
+
+                     }
+                     if (isExist) {
+ //                        getChiqimmagazinall.put(resprocessedchiqim);
+
+
+                     }
+                 } catch (JSONException e) {
+                     e.printStackTrace();
+                 }
+             }
+         });
+
+        -----------------
+
+
+
+
+
+
+SELECT price.id ,price.magazin_id
+
+FROM price
+
+LEFT JOIN chiqim ON chiqim.price_id = price.id
+
+
+
+WHERE chiqim.price_id IS NULL
+
+ORDER BY `price`.`magazin_id` ASC
+
+
+---------------
+
+
+
+
+SELECT  price.id ,price.magazin_id, price.l from
+
+(
+
+SELECT price.id ,price.magazin_id, price.l
+
+FROM price
+
+LEFT JOIN chiqim ON chiqim.price_id = price.id
+
+
+
+WHERE chiqim.price_id IS NULL and price.l!=1
+
+ORDER BY `price`.`magazin_id` ASC) as price
+
+WHERE price.magazin_id!=0   and price.l!=1
+
+
+--------------------
+
+INSERT INTO `baseprice`
+(`id`, `tovar_id`, `magazin_id`, `user_id`, `prc`, `t_created`)
+
+ SELECT `id`, `tovar_id`, `magazin_id`, `user_id`, `prc`, `t_created` FROM price  WHERE magazin_id=0
+--------------
+
+ delete from price WHERE id IN (
+
+
+SELECT  price.id  #, price.l
+
+from
+
+(
+
+SELECT price.id   , price.l
+
+FROM price
+
+LEFT JOIN chiqim ON chiqim.price_id = price.id
+
+WHERE chiqim.price_id IS NULL  and price.l!=1
+
+) as price  WHERE   price.l!=1
+
+)
+
+=====================================================
+
+
+
+SELECT
+  p.id,
+  p.title,
+  p.parent_id,
+  COALESCE(SUM(qty),  0) AS soni
+FROM
+  tovarnomlari p
+LEFT JOIN
+(  
+SELECT    st.tovar_id,    st.soni AS qty  FROM    kirim st  WHERE    st.tovar_id IN(74)
+	UNION ALL
+SELECT  st.tovar_id,  - st.soni FROM  chiqim st WHERE  st.tovar_id IN(74)
+	UNION ALL
+SELECT  st.tovar_id,  - st.soni FROM  bulut st WHERE  st.tovar_id IN(74)
+) AS T ON p.id = T.tovar_id
+
+WHERE  parent_id != 0 AND id IN(74)
+GROUP BY
+  p.id,
+  p.title
+ORDER BY
+  `p`.`id` ASC;
+
+======bulut============
+
+SELECT
+  p.id,
+  p.title,
+  p.parent_id,
+  COALESCE(SUM(qty),  0) AS soni
+FROM
+  tovarnomlari p
+LEFT JOIN
+(
+SELECT    st.tovar_id,    st.soni AS qty  FROM    bulut st  #WHERE    st.tovar_id IN(74)
+	#UNION ALL
+#SELECT  st.tovar_id,  - st.soni FROM  bulut st #WHERE  st.tovar_id IN(74)
+	#UNION ALL
+#SELECT  st.tovar_id,  - st.soni FROM  bulut st #WHERE  st.tovar_id IN(74)
+) AS T ON p.id = T.tovar_id
+
+WHERE  parent_id != 0 #AND id IN(74)
+GROUP BY
+  p.id,
+  p.title
+ORDER BY
+  `p`.`id` ASC;
+
+
+===========
+
+
+
+tovar_id,soni,batch,kid,manufacturer,t_created,t_modified,sklad_id
+
+
+
+
+
+/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_0002.csv
+
+COPY uhtt_barcode_ref_0002 FROM '/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_0002.csv' WITH FORMAT csv;
+
+COPY barcode FROM '/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_0001.csv' DELIMITERS ';' QUOTE E'\b' NULL AS '' csv;
+COPY barcode FROM '/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_all.csv' DELIMITERS ';' QUOTE E'\b' NULL AS '' csv;
+
+stock/DATA/uhtt_barcode_ref_all.csv
+/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_all.csv
+
+create table
+id	upcean	name	categoryid	categoryname	brandid	brandname
+
+CREATE TABLE barcode(
+    id bigint PRIMARY KEY,
+   upcean text   NOT NULL,
+   name text NOT NULL,
+   categoryid int   NOT NULL,
+   categoryname text NOT NULL,
+   brandid int NOT NULL,
+   brandname text NOT NULL
+);
+
+CREATE TABLE  barcode(
+    id bigint,
+   upcean text    ,
+   name text  ,
+   categoryid int    ,
+   categoryname text  ,
+   brandid int  ,
+   brandname text
+);
+
+CREATE TABLE  IF NOT EXISTS  barcode(
+    id bigint,
+   upcean text    ,
+   name text  ,
+   categoryid int    ,
+   categoryname text  ,
+   brandid int  ,
+   brandname text
+);
+
+
+COPY barcode FROM '/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_0001.csv' DELIMITERS E'\t' QUOTE E'\b' NULL AS '' csv;
+
+
+copy barcode (id,upcean,name,categoryid,categoryname,brandid,brandname) FROM '/home/vx/WebstormProjects/smartsurveillance/dshop/stock/DATA/uhtt_barcode_ref_0001.csv' (FORMAT csv, HEADER,   DELIMITER E'\t' , quote E'\b'   );
+copy barcode (id,upcean,name,categoryid,categoryname,brandid,brandname) FROM '/home/vx/Загрузки/uhtt_barcode_ref_all/uhtt_barcode_ref_all.csv' (FORMAT csv, HEADER,   DELIMITER E'\t' , quote E'\b'   );
+
+
+
+SELECT folder_id, folder.name, COUNT(*) AS COUNT FROM barcode LEFT join folder on folder.id=barcode.folder_id GROUP BY folder_id ORDER BY `COUNT` ASC
+
+SELECT c.id, c.name, ( SELECT COUNT(folder_id) FROM barcode WHERE barcode.folder_id = c.id ) AS soni FROM folder c WHERE 1 GROUP BY c.id ORDER BY soni LIMIT 1000
+
+
+
+DATABASE_URL=postgres://postgres:zzxxcc99@127.0.0.1:5432/reflection_db
+
+select categoryid, categoryname, folder_id from barcode   group by categoryid  ,categoryname, folder_id order by categoryname
+
+
+
+https://stackoverflow.com/questions/23822087/export-postgres-table-to-csv-error
+https://stackoverflow.com/questions/4791288/how-to-export-table-data-to-file
+
+First, log into the PostgreSQL console via the command line with the psql command.
+
+To export:
+
+\connect database_name;
+\copy my_table to 'my_table.csv' csv;
+\q
+To import:
+
+\connect database_name;
+\copy my_table FROM 'my_table.csv' DELIMITER ',' CSV;
+\q
+Done!
+
+Or, from a shell script!
+
+export PGPASSWORD=dbpass
+psql --dbname=dbpass --username=dbuser --host=127.0.0.1 -c "COPY (SELECT * FROM widget) TO stdout DELIMITER ',' CSV HEADER" > export.csv
+Bonus Advice Use pgcli, it's way better than psql
+
+
+copy barcode to '/home/vx/WebstormProjects/smartsurveillance/dshop/export/barcode.csv' csv;
+copy folder FROM '/home/vx/WebstormProjects/smartsurveillance/dshop/export/folder.csv' DELIMITER ',' CSV;
+copy folder FROM '/home/dshop/export/folder.csv' DELIMITER ',' CSV;
+copy barcode FROM '/home/dshop/export/barcode.csv' DELIMITER ',' CSV;
+
++++++++++++++
+3421397 запис(ь/и/ей) обработано.
+
+Время выполнения: 278,684.865 мсек
+
+SQL-запрос выполнен.
+
+++++++++++++++
+3421397 запис(ь/и/ей) обработано.
+
+Время выполнения: 13,496.676 мсек
+
+SQL-запрос выполнен.
+
+
+
+
+
+3604439
+3604468
+3700000
+3700001
+
+114047
+
+
+
+x%M2fUGZbXw+_Jxs
+
+
+http://45.77.187.97:4066/
+
+
+SELECT
+ id
+ ,link
+ ,elon
+ ,elon->'maininfo'->>'importance' as importance
+ ,(elon->'maininfo'->'address' -> 'section') as section
+ ,case when elon->'maininfo'->'address' -> 'section' <@ hudud then elon->'maininfo'->'ownertel'  else  null  end as ownertel
+ , h.hudud
+ FROM olx o
+ LEFT OUTER  JOIN hudud h ON h.uid=3
+ AND   elon->'maininfo'->'address' -> 'section' <@ hudud
+ ORDER BY importance, t ASC
+ OFFSET 0 LIMIT  500;
+
+
+ SELECT id ,elon    ,images    ,link    ,t    ,u
+  ,elon->'maininfo'->>'importance' as importance
+   FROM olx ol
+   WHERE   id in  (85, 535, 869, 870, 871, 874, 875, 876, 877, 878, 879, 880, 882, 883, 884, 885, 886, 888, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953)
+  ORDER BY importance, t ASC ;
+
+
+(SELECT  replace(replace(result::text,'[','' ),']','') as ids  from wish where id=21)
+
+
+ SELECT
+  o.id
+ ,o.elon
+ ,o.images
+ ,o.link
+ ,o.t
+ ,o.u
+ ,o.elon->'maininfo'->>'importance' AS importance
+ ,w.result
+ FROM olx o
+ LEFT JOIN wish w ON w.id=21
+ where  o.id  in w.result
+
+ ORDER BY importance, t ASC ;
+
+
+  SELECT
+  o.id
+   ,o.elon
+   ,o.images
+   ,o.link
+   ,o.t
+   ,o.u
+   ,o.elon->'maininfo'->>'importance' AS importance
+   ,w.result
+
+  FROM olx o
+  ,(select result ids from wish w1 where w1.id=27) w
+
+
+  where  ( o.id::text)::jsonb <@ w.ids
+
+  order by o.id asc
+
+---------
+
+SELECT
+  o.id
+   ,o.elon
+   ,o.images
+   ,o.link
+    ,o.t
+   ,o.u
+   ,o.elon->'maininfo'->>'importance' AS importance
+   ,o.elon->'maininfo'->'address'->'section' AS section
+
+ ,case when elon->'maininfo'->'address'->'section' <@ hudud then elon->'maininfo'->'ownertel'  else  null  end as ownertel
+
+  FROM olx o
+  ,(select result from wish w1 where w1.id=27) w
+
+  LEFT OUTER  JOIN hudud h ON h.uid=3
+--AND   o.elon->'maininfo'->'address' -> 'section' <@ hudud
+
+  where  ( o.id::text)::jsonb <@ w.result
+
+  order by o.id asc
+
+  ----------
+
+
+  SELECT
+    w.id
+  , w.buyerid
+  , b.personaldata -> 'maininfo' ->> 'customerdata' oluvchi
+  , u.id uid
+  , u.name rieltor
+  , w.elon
+
+   FROM wish w
+
+  left join buyer b on b.id=w.buyerid
+
+  left join users u on u.id=b.uid
+
+  WHERE  (elon -> 'maininfo' ) @> '{"retype":"Квартиры","dealtype":"Продажа","address":{"city":"Ташкент","district":"Юнусабадский район"},"rooms":[4]}'    AND  CAST(elon -> 'maininfo' ->> 'pricestart' as numeric)  BETWEEN 0  AND 900000000  ORDER BY id ASC ;
+
+
+================flat22===================
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content=' content="width=100, initial-scale=1"'>
+    <!--    <meta http-equiv="Cache-Control" content="no-cache"/>-->
+    <!--    <meta http-equiv="Pragma" content="no-cache"/>-->
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>FLAT-RTD</title>
+    <!--    <script src="/socket.io/socket.io.js"></script>-->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bower_components/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bower_components/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+    <script src="/vue/dist/vue.min.js"></script>
+    <script src="/vue-resource/dist/vue-resource.min.js"></script>
+
+    <link rel="stylesheet" href='/json-forms/dist/css/brutusin-json-forms.min.css'/>
+    <script src="/json-forms/dist/js/brutusin-json-forms.min.js"></script>
+    <script src="/json-forms/dist/js/brutusin-json-forms-bootstrap.min.js"></script>
+    <script src="/schema.js"></script>
+
+
+    <style type="text/css" media="screen">
+        body {
+            padding: 0;
+        }
+
+        #container {
+            width: 380px;
+            position: relative;
+            top: 150px;
+            /*margin-right: 10px;*/
+        }
+
+        #getdata {
+            color: #FFEB3B;
+            /*background-color: #337ab7;*/
+            /*border-color: #2e6da4;*/
+        }
+
+        #images {
+            position: relative;
+            top: 150px;
+            /*margin-right: 10px;*/
+        }
+
+        #getimages {
+            color: #FFEB3B;
+        }
+
+        #props-dropdown {
+            display: inline-flex;
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div id="navbar_header" class="navbar-header">
+            <a href="/mainpage" class="navbar-brand">RTD</a>
+
+            <div id="props-dropdown" class="dropdown   ">
+                <button class="   btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Разделы
+                    <span class="caret"></span>
+                </button>
+                <ul id="props" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <!--<li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>-->
+                </ul>
+            </div>
+            <button href="#" id="getdata" class=" btn btn-primary"><span class="glyphicon glyphicon-send "
+                                                                         aria-hidden="true"></span>
+            </button>
+            <a href="#images" id="getimages" class=" btn btn-primary">
+                Показать фотографии <span class="glyphicon glyphicon-picture "
+                                          aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+<div id="container"></div>
+<div id="images">
+    <div class="row">
+        <div v-for="obj in images" class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img class="im" v-bind:src="urtg+obj.image" alt="...">
+
+                <div class="caption">
+                    <!--<h3>Thumbnail label</h3>-->
+                    <p>{{ obj.ct }}</p>
+                    <!--<p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript">
+
+
+    /*var socket = io(/!*'http://192.168.3.5:3000', {
+        // WARNING: in that case, there is no fallback to long-polling
+        transports: [ 'websocket'/!*, 'polling'*!/ ] // or [ 'websocket', 'polling' ], which is the same thing
+    }*!/);*/
+    // socket.on('connect', function () {
+    //     console.log('Siz soket serverga ulandingiz');
+    // });
+    const uniqueArray = function (arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) === pos;
+        });
+    };
+    // socket.emit('sessioncheckreq', true);
+    // socket.on('reslogin', function (data) {
+    //     console.log(data)
+    //     if (data) {
+    //         window.location.replace('/mainpage');
+    //     }
+    // });
+
+
+    const container = document.getElementById('container');
+    const BrutusinForms = brutusin["json-forms"];
+    var bf;
+    let prevdata;
+
+
+    // add support for password and file
+    BrutusinForms.addDecorator(function (element, schema) {
+        if (element.tagName) {
+            const tagName = element.tagName.toLowerCase();
+            const className = element.className.toLowerCase();
+
+            if ($(element).text() === 'Add' || $(element).text() === 'Add item') {
+//                $(element)
+                $(element).text("").addClass("glyphicon glyphicon-plus")
+//                console.log("element....", $(element))
+            }
+            if (schema !== undefined && schema.hasOwnProperty('c') && tagName === "label") {
+//                console.log("element....", element )
+//                console.log("schema....", $(element).html() )
+                $(element).css({"cursor": "pointer", "text-decoration": "underline"});
+                $(element).parent().next("td").fadeToggle(0);
+
+                $(element).click(function () {
+//                    $(this).parent().next("td").hide();
+                    $(this).parent().next("td").fadeToggle(300)
+                });
+            }
+
+            if (tagName === "td" && className === "prop-name") {
+                if (schema.format === "hidden") {
+//                     console.log(element)
+//                    element.display = "none";
+                    $(element).hide();
+                }
+            }
+
+
+            if (tagName === "td" && className === "prop-name") {
+                if (schema.format === "hidden") {
+//                     console.log(element)
+//                    element.display = "none";
+                    $(element).hide();
+                }
+            }
+            if (tagName === "input" && schema.type === "string") {
+                if (schema.format === 'inputstream' || schema.format === 'file') {
+                    element.type = 'file';
+                } else if (schema.format === 'password') {
+                    element.type = 'password';
+                } else if (schema.format === 'date') {
+                    element.type = 'datetime-local';
+                } else if (schema.format === 'tel') {
+                    element.type = 'tel';
+                } else if (schema.format === 'color') {
+                    element.type = 'color';
+                } else if (schema.format === 'getgeopos') {
+                    element.type = 'button';
+                    element.value = 'Получить геопозицию';
+                    $(element).click(function () {
+                        const options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                        const success = function (pos) {
+                            const crd = pos.coords;
+//                            console.log(crd );
+                            const geolocation = {
+                                "lat": crd.latitude,
+                                "lon": crd.longitude,
+                                "acc": Math.round(crd.accuracy)
+                            };
+//                            console.log(schema);
+//                            console.log(element);
+                            if (prevdata.maininfo === undefined) {
+                                prevdata['maininfo'] = {address: {geolocation: geolocation}}
+                            } else {
+                                prevdata = bf.getData();
+                                console.log(prevdata);
+                                prevdata.maininfo.address['geolocation'] = geolocation;
+                            }
+                            $(container).empty();
+                            bf.render(container, prevdata);
+                        }
+                        const error = function (err) {
+                            console.warn(err);
+                        }
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+                    });
+                } else if (schema.format === 'toggle') {
+                    element.type = 'button';
+                    element.value = 'toggle';
+                    $(element).click(function (e) {
+                        console.log(e);
+                        console.log(schema);
+                        console.log(element);
+//                        $(this).closest("tr").nextAll("tr").hide();
+
+                    });
+
+                }
+            }
+        }
+    });
+
+
+    console.log(window.location.search);
+    const origin = window.location.origin
+    const pathname = window.location.pathname
+    let id = Number(window.location.search.split("=")[1])
+    const schema = schem.flat.schema;
+
+    if (id == 0) {
+        bf = BrutusinForms.create(schema);
+//            var container = document.getElementById('container');
+        bf.render(container/*, prevdata*/);
+    }
+
+    let access = true;
+    // socket.on('sessioncheckres', function (data) {
+    //     console.log(data)
+    //     var uid = data.id, rol = data.rol;
+    //     if (data != null) {
+    //     } else {
+    //         window.location.replace('/signin');
+    //     }
+    // });
+
+    new Vue({
+        el: '#tweety,#images',
+        data: {
+            tweets: [],
+            // resource_url: origin + pathname + "/" + id + "/" + uid + "/" + rol,
+            resource_url: `${origin}${pathname}/${id}`,
+
+            loading: false,
+            ur: origin,
+            images: [],
+            urtg: ""
+        },
+        methods: {
+
+            load: function () {
+//                this.loading = true
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+                    this.urtg = response.data.url + "/";
+                    prevdata = response.data.data;
+                    console.log('prevdata......', prevdata)
+                    const mi = response.data.data.maininfo;
+                    console.log('mi......', mi)
+                    access = response.data.access;
+                    if (!access) {
+                        $("#getdata").attr({"disabled": "disabled"});
+                    }
+
+                    const navbar_header = $("#navbar_header");
+
+                    if (mi !== undefined && mi.ownertel !== undefined && 0 < mi.ownertel.length) {
+                        mi.ownertel.forEach(function (tel) {
+                            navbar_header.append(
+                                '<a href="tel:+' + tel + '" id="getimages" class=" btn btn-primary"><span class="glyphicon glyphicon-earphone " aria-hidden="true"></span></a>')
+                        });
+                    }
+
+
+//            var BrutusinForms = brutusin["json-forms"];
+                    bf = BrutusinForms.create(schema);
+//            var container = document.getElementById('container');
+                    bf.render(container, prevdata);
+                    const prs = schema.properties;
+                    let btns = "";
+                    console.log('schema', schema);
+                    console.log('prs', prs);
+                    Object.keys(prs).forEach(function (key) {
+                        // console.log('key', key);
+//                console.log('key', prs[key].title);
+                        var t = prs[key].title;
+                        btns += "<li class='pb '><a href='#' data-key='" + key + "'>" + t + "</a></li>";
+
+//                        btns += "<button type=button class='pb btn btn-default' data-key='" + key + "'>" + t + "</button>";
+                        if (key !== "maininfo") {
+                            const l = $("#container").find("label:contains(" + t + ")")
+//        console.log(l);
+                            const tr = l.closest("tr");
+                            tr.hide();
+                        }
+
+
+                    });
+                    $("#props").html(btns);
+
+
+                    const cit = [
+                        "Самое важное изобретение в истории человечества - письменный договор. Он позволяет людям изложить на бумаге все причины, по которым они не доверяют друг другу.",
+                        "Хорошее отношение к покупателю заканчивается вместе с его деньгами.",
+                        "Стоимость недвижимости определяется тремя факторами: местоположением, местоположением и ………местоположением)))",
+                        "Дом - это место, где женщина трудится в отсутствие мужчины, а мужчина отдыхает в присутствии женщины.",
+                        "От перемены места жительства люди не меняются.",
+                        "Жизнь - движение, но без недвижимости - это не жизнь!",
+                        "Хорошая квартира - это когда в самой маленькой комнате в самом дальнем углу незаметно пасется стадо бегемотов.",
+                        "Ночь. Тишина. И только слышно, как растут цены на недвижимость…",
+                        "Если есть дорогая покупка, свидетельсвующая о превратно понимаемом снобизме, то это автомобиль. Автомобили падают в цене. Стоимость домов растет. (Харви Маккей)",
+                        "Обзаводясь землей, приглядись прежде всего к воде, дороге, соседу. (Плиний Старший)",
+                        "Она ощутима, прочна, красива. С моей точки зрения, она даже артистична. Я просто обожаю недвижимость. (Дональд Трамп)",
+                        "Временное жильё самое постоянное.",
+                        "Дом — это всего лишь место, куда идёшь, если некуда больше пойти.",
+                        "Идеальный размер дома: чтобы было слышно детей, но не слишком отчетливо. Миньон Маклофлин",
+                        "Дом — это место, где мы отдыхаем от усилий быть вежливыми с окружающими. «20,000 Quips d Quotes»",
+                        "В продаже есть только два вида домов: те, которые нам не подходят, и те, которые нам не по средствам"
+                    ]
+
+                    shuffle(cit)
+
+                    this.images = prevdata.maininfo !== undefined && prevdata.maininfo.images !== undefined ? prevdata.maininfo.images : []
+
+                    let im = [], i = 0;
+                    this.images.forEach(function (el) {
+                        im.push({
+                            image: el,
+                            ct: cit[i]
+                        })
+                        i++
+                    });
+                    this.images = im
+                    console.log('images......', this.images.length)
+                    if (this.images.length === 0) {
+                        $("#getimages").hide()
+                    }
+
+                    $(document).ready(function () {
+                        $(".im").on("error", function () {
+                            console.log($(this).attr('src'))
+                            $(this).attr('src', 'https://static.olx.uz/img-olxuz/' + getfname($(this).attr('src')));
+
+                        });
+                    });
+
+
+//                    this.loading = false
+                }, function (error) {
+                    console.log(error)
+//                    this.loading = false
+                })
+            }
+        },
+        created: function () {
+            this.load()
+
+
+        }
+
+
+    });
+
+
+    $(document).on("click", "#props .pb", function () {
+        console.log($(this));
+        $(this).addClass("active").siblings().removeClass("active")
+        const label = $(this).text();
+//        console.log(label);
+        const l = $("#container").find("label:contains(" + label + ")")
+//        console.log(l);
+        const tr = l.closest("tr");
+        /*const socket = io(/!*'http://192.168.3.5:3000', {
+        // WARNING: in that case, there is no fallback to long-polling
+        transports: [ 'websocket'/!*, 'polling'*!/ ] // or [ 'websocket', 'polling' ], which is the same thing
+    }*!/);
+        socket.on('connect', function () {
+            console.log('Siz soket serverga ulandingiz');
+        });
+        var uniqueArray = function (arrArg) {
+            return arrArg.filter(function (elem, pos, arr) {
+                return arr.indexOf(elem) == pos;
+            });
+        };
+        socket.emit('sessioncheckreq', true);
+        socket.on('sessioncheckres', function (data) {
+            console.log(data)
+            if (data == null) {
+                window.location.replace('/signin');
+            }
+        });
+        socket.on('reslogin', function (data) {
+            console.log(data)
+            if (data) {
+                window.location.replace('/mainpage');
+            }
+        });*/
+        const trsibl = tr.siblings("tr");
+        console.log(trsibl);
+        trsibl.hide();
+        tr.show();
+        tr.find("tr").show();
+    });
+    let xhr, stat = 0;
+    $("#getdata").click(function () {
+        console.log(JSON.stringify(bf.getData(), null, 2))
+        if (!access) return;
+
+//        bf.validate();
+        if (bf.getData() == null) return
+        if (xhr !== undefined && stat === 0) {
+            xhr.abort()
+        }
+        var values = JSON.stringify(bf.getData(), null, 2)
+        xhr = $.ajax({
+            //processData:true,
+            //async: false,
+            url: '/olx',
+            method: id === 0 ? 'post' : 'put',
+            data: {id: id, s: values},
+            beforeSend: function () {
+                $("#getdata").css({"color": "#FF5722"})
+                stat = 0;
+            },
+            success: function (data) {
+                id = data.id
+                if (history.pushState) {
+                    // var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + id;
+                    const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?id=${id}`
+                    window.history.pushState({path: newurl}, '', newurl);
+                    $("#getdata").css({"color": "#FFEB3B"})
+                }
+            }, complete: function (textStatus) {
+                console.log(textStatus)
+                stat = textStatus.status
+            }
+        });
+    });
+
+
+    function shuffle(array) {
+        array.sort(function () {
+            Math.random() - 0.5
+        });
+    }
+
+
+    function getfname(url) {
+        const nmar = url.split("/")
+        return nmar[nmar.length - 1]
+    }
+
+</script>
+<!--
+<script src="/dbcon.js"></script>
+-->
+
+
+
+
+========//flat==================
+
+
+
+
+
+
+
+
+
+
+

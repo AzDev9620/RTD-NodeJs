@@ -1,0 +1,22 @@
+root@vultr:~# sudo systemctl status rtd2022
+● rtd2022.service - RTD 2022
+   Loaded: loaded (/root/home_common/rtd2022/rtd2022.service; linked; vendor preset: enabled)
+   Active: active (running) since Mon 2022-07-04 06:37:57 UTC; 2s ago
+     Docs: https://google.com
+ Main PID: 8815 (node)
+    Tasks: 6
+   Memory: 23.6M
+      CPU: 230ms
+   CGroup: /system.slice/rtd2022.service
+           └─8815 /usr/bin/node index.js
+
+Jul 04 06:37:57 vultr.guest systemd[1]: Started RTD 2022.
+Jul 04 06:37:57 vultr.guest node[8815]: Warning: connect.session() MemoryStore is not
+Jul 04 06:37:57 vultr.guest node[8815]: designed for a production environment, as it will leak
+Jul 04 06:37:57 vultr.guest node[8815]: memory, and will not scale past a single process.
+Jul 04 06:37:57 vultr.guest node[8815]: server_ listening on port  4067 http://78.141.214.234:4067
+Jul 04 06:37:57 vultr.guest node[8815]: server listening on port 4066 https://78.141.214.234:4066
+Jul 04 06:37:57 vultr.guest node[8815]: https://78.141.214.234:4066/signin77
+Jul 04 06:37:57 vultr.guest node[8815]: 78.141.214.234
+Jul 04 06:37:57 vultr.guest node[8815]: 4066
+Jul 04 06:37:57 vultr.guest node[8815]: ...: undefined

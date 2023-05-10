@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <!--    <meta http-equiv="Cache-Control" content="no-cache"/>-->
+    <!--    <meta http-equiv="Pragma" content="no-cache"/>-->
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>USERS-RTD</title>
+    <!--    <link rel="stylesheet" href="style.css">-->
+
+    <!--    <script src="/socket.io/socket.io.js"></script>-->
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bower_components/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bower_components/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+
+    <style>
+        .uname {
+            display: inline-flex;
+            min-width: 140px;
+            max-width: 200px;
+        }
+
+        .uinp {
+            display: inline-flex;
+            /*min-width: 100px;*/
+            /*max-width: 160px;*/
+        }
+
+        #userform, #usereditform {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+<a class=" btn btn-primary" href="/">MAINPAGE</a>
+<a class=" add-user btn btn-primary" href="#">+</a>
+<div id="uf-wrapper">
+    <form id="userform">
+        <input name="name" placeholder="name">
+        <input name="surname" placeholder="surname">
+        <input name="login" placeholder="login" autocomplete="off">
+        <input name="pass" placeholder="pass">
+        <input name="rol" placeholder="rol" value="4">
+        <input name="address" placeholder="address">
+        <input name="country" placeholder="country">
+        <input name="city" placeholder="city">
+        <input name="email" placeholder="email">
+        <input name="telefon" placeholder="telefon">
+        <input type="submit" name="submit" placeholder="SAVE">
+    </form>
+    <form id="usereditform">
+        <input name="id" placeholder="id" disabled>
+        <input name="name" placeholder="name">
+        <input name="surname" placeholder="surname">
+        <input name="login" placeholder="login" autocomplete="off">
+        <input name="pass" placeholder="pass">
+        <input name="rol" placeholder="rol" value="4">
+        <input name="address" placeholder="address">
+        <input name="country" placeholder="country">
+        <input name="city" placeholder="city">
+        <input name="email" placeholder="email">
+        <input name="telefon" placeholder="telefon">
+        <input type="submit" name="submit" placeholder="SAVE">
+    </form>
+</div>
+<div class="  header1">
+    <ul id="rieltors" class="list-group headerlist "></ul>
+</div>
+
+
+</body>
+</html>
+
+<script>
+    let loginarr = []
+    let usereditform = $("#usereditform");
+
+    $('.add-user').click(function () {
+        $("#userform").toggle(100);
+        document.getElementById("userform").reset();
+    });
+    $('#userform>input[name=login]').keyup(function () {
+        const text = $(this).val().toLowerCase();
+        let result = loginarr.find(item => item.login === text);
+        // console.log(result)
+        if (result === undefined) {
+            $(this).css({"background-color": "lime"})
+        } else {
+            $(this).css({"background-color": "pink"})
+        }
+    });
+
+    $("#userform").submit(function (e) {
+        e.preventDefault();
+        let b = true;
+        $('form#userform :text').each(function (i, el) {
+            let input = $(el);
+            if (input.val().trim() === '') {
+                $(this).css({"background-color": "lightyellow"});
+                b = false
+            }
+        });
+
+        let logininp = $('#userform>input[name=login]');
+        let text = logininp.val().trim().toLowerCase();
+        let result = loginarr.find(item => item.login === text);
+        if (result === undefined && text !== '') {
+            logininp.css({"background-color": "lime"})
+        } else {
+            logininp.css({"background-color": "pink"})
+            return
+        }
+
+        let o = {};
+        $('form#userform :text').each(function () {
+            let input = $(this);
+            o[input.attr('name')] = input.val().trim()
+        });
+        if (!b) return;
+        let success = function (data) {
+            console.log(data)
+            if (data) {
+                $("#userform").trigger('reset')
+                $('form#userform :text').each(function (i, el) {
+                    let input = $(el);
+                    input.css({"background-color": "transparent"});
+                });
+                location.reload();
+            } else {
+                logininp.css({"background-color": "pink"})
+            }
+        };
+        $.ajax({
+            type: "POST",
+            url: 'users',
+            data: o,
+            success: success,
+            dataType: 'json'
+        });
+    });
+
+    $.get("users/list", function (data) {
+        console.log(data)
+        loginarr = data;
+        for (let i of data) {
+            // console.log(i.hudud)
+            let li = `<li class="list-group-item list-group-item-info">
+<a href="#"  class="uname">${i.name} ${i.surname}</a>&nbsp;
+<button data-id="${i.id}" class="edit">EDIT</button>
+<div class="ufd"></div>
+</li>`
+            $('#rieltors').append(li)
+        }
+    });
+
+    $(document).on("click", ".edit", function () {
+        let $this = $(this)
+        const id = Number($(this).attr('data-id'))
+        let o = loginarr.find(items => items.id === id);
+        // console.log(id, o);
+        // $('#userform').show(100)
+        usereditform.show()
+        $this.next('.ufd').html(usereditform);
+        $('form#usereditform :text').each(function () {
+            let i = $(this);
+            i.css({"background-color": "#fff"});
+            const name = i.attr('name');
+            i.val(o[name])
+        });
+
+
+        $('#usereditform>input[name=login]').keyup(function () {
+            const text = $(this).val().toLowerCase();
+            let result = loginarr.find(item => item.login === text);
+            // console.log(result)
+            if (result === undefined) {
+                $(this).css({"background-color": "lime"})
+            } else {
+                $(this).css({"background-color": "pink"})
+            }
+        });
+
+
+    });
+
+    usereditform.submit(function (e) {
+        e.preventDefault();
+
+        let b = true;
+        $('form#usereditform :text').each(function (i, el) {
+            let input = $(el);
+            if (input.val().trim() === '') {
+                $(this).css({"background-color": "lightyellow"});
+                b = false
+            }
+        });
+        var temparr = loginarr;
+
+        let id = Number($(this).find("input[name=id]").val())
+        let curobj = temparr.find(item => item.id === id);
+        console.log(curobj.login)
+        var temparr = loginarr.filter(item => item.id !== id)
+        // console.log(temparr)
+
+
+        let logininp = $('#usereditform>input[name=login]');
+        let loginval = logininp.val().trim().toLowerCase();
+
+        let result = temparr.find(item => item.login === loginval);
+        if (result === undefined && loginval !== '') {
+            logininp.css({"background-color": "lime"})
+        } else {
+            logininp.css({"background-color": "pink"})
+            return
+        }
+
+        let o = {};
+        $('form#usereditform :text').each(function () {
+            let input = $(this);
+            o[input.attr('name')] = input.val().trim()
+        });
+        if (!b) return;
+        let success = function (data) {
+            console.log(data)
+            if (data) {
+                // $("#usereditform").trigger('reset')
+                // $('form#usereditform :text').each(function (i, el) {
+                //     var input = $(el);
+                //     input.css({"background-color": "transparent"});
+                // });
+                // location.reload();
+            } else {
+                logininp.css({"background-color": "pink"})
+            }
+        };
+        $.ajax({
+            type: "PUT",
+            url: 'users',
+            data: o,
+            success: success,
+            dataType: 'json'
+        });
+    });
+
+
+</script>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>Список риелторов-RTD</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+</head>
+<body>
+
+<div include-html="menulist.html"></div>
+
+<div id="tweety">
+    <div class="container2">
+        <!--<header class="toolbar">
+            <h2>Список покупателей RTD</h2>
+        </header>-->
+        <div class="list__wrapper" @scroll="onScroll">
+            <ul class="list list-group">
+                <li class="list__item tweet  list-group-item list-group-item-success" v-for="r in rieltors">
+                    <!--<div class="tweet__left">
+                        <img :src="tweet.avatar" class="tweet__img">
+                    </div>-->
+                    <span class="tweet__body ">
+                        <!--<a target="_self" :href="'/buyerprofile?id=' + tweet.id" class=" landmarktxt " :title="tweet.remark!=null ? tweet.remark : ''" >{{ tweet.customerdata  }} | {{ tweet.remark!=null ? tweet.remark : "" }}</a>
+                        <a target="_blank" :href="'/buyerprofile?id=' + tweet.id" class=" " >
+                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        </a>-->
+
+                        <a v-if="rol>0" :href="'userprofile/'+r.id">{{r.name}} {{r.surname}}</a> | <a v-if="rol>0"
+                                                                                                      :href="'buyerlist?id='+r.id">покупатели: {{r.c}}</a>
+
+                        <!--<span v-if="rol==1" class="badge pull-right">
+                         <a class="buyerdel" v-on:click="delbuyer(r.id)" class=""
+                            target="_blank">
+                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                         </a>
+                    </span>-->
+
+                    </span>
+                </li>
+                <li class="list__loader">
+                    <img src="loader.gif">
+                </li>
+            </ul>
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>
+
+
+<script src="/vue/dist/vue.min.js"></script>
+<script src="/vue-resource/dist/vue-resource.min.js"></script>
+
+<script type="text/javascript">
+    const origin = window.location.origin
+    const pathname = window.location.pathname;
+
+    new Vue({
+        el: '#tweety',
+        data: {
+            rieltors: [],
+            resource_url: origin + '/rieltorlistfull',///0/50
+            loading: false,
+            userdata: {},
+            rol: 0
+        },
+        methods: {
+            onScroll: function (event) {
+                return
+                var wrapper = event.target,
+                    list = wrapper.firstElementChild
+
+                var scrollTop = wrapper.scrollTop,
+                    wrapperHeight = wrapper.offsetHeight,
+                    listHeight = list.offsetHeight
+
+                var diffHeight = listHeight - wrapperHeight
+
+                //console.log('listHeight......', listHeight)
+                //console.log('wrapperHeight......', wrapperHeight)
+                //console.log('diffHeight......', diffHeight)
+                //console.log('scrollTop......', scrollTop)
+
+                if (diffHeight <= scrollTop && !this.loading) {
+                    this.load()
+                }
+            },
+            load: function () {
+                this.loading = true
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+                    const data = response.data
+                    this.rol = data.rol
+                    this.userdata = data.userdata
+
+                    this.rieltors = this.rieltors.concat(data.users)
+                    this.resource_url = data.next_page_url
+                    this.loading = false
+
+                    console.log('Number(userdata.rol)......', (this.rol))
+
+
+                }, function (error) {
+                    console.log(error)
+                    this.loading = false
+                })
+            },
+            delbuyer: function (id) {
+                this.$http.delete('/buyer/' + id).then(function (response) {
+//                    console.log('del-response......', response)
+                    var ws = this.rieltors;
+                    for (var i in ws) {
+                        if (id == ws[i].id) {
+                            if (i > -1) {
+                                this.rieltors.splice(i, 1);
+                            }
+                        }
+                    }
+                }, function (error) {
+                    console.log(error)
+                });
+                this.$http.delete('/delwish/' + id).then(function (response) {
+//                    console.log('del-response......', response)
+                    var ws = this.rieltors;
+                    for (var i in ws) {
+                        if (id == ws[i].id) {
+                            if (i > -1) {
+                                this.rieltors.splice(i, 1);
+                            }
+                        }
+                    }
+                }, function (error) {
+                    console.log(error)
+                });
+            }
+        },
+        created: function () {
+            this.load()
+        }
+
+
+    })
+
+
+</script>
+<script src="main.js"></script>
+
+
+
+

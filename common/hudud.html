@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <!--    <meta http-equiv="Cache-Control" content="no-cache"/>-->
+    <!--    <meta http-equiv="Pragma" content="no-cache"/>-->
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>HUDUD-RTD</title>
+    <!--    <link rel="stylesheet" href="style.css">-->
+
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bower_components/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bower_components/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+
+    <style>
+        .uname {
+            display: inline-flex;
+            min-width: 140px;
+            max-width: 200px;
+        }
+
+        .uinp {
+            display: inline-flex;
+            /*min-width: 100px;*/
+            /*max-width: 160px;*/
+        }
+    </style>
+
+</head>
+<body>
+<a id="" class="login btn btn-primary" href="/mainpage">MAINPAGE</a>
+<div class="  header1">
+    <ul id="rieltors" class="list-group headerlist "></ul>
+</div>
+
+
+</body>
+</html>
+
+<script>
+
+    $.get("hudud/list", function (data) {
+        console.log(data)
+
+        for (let i of data) {
+            // console.log(i.hudud)
+            let li = `<li class="list-group-item list-group-item-info"><a href="#"  class="uname">${i.name} ${i.surname}</a>&nbsp;<input class="uinp" data-val="${i.hudud}" value="${i.hudud}" placeholder="hudud qowing">&nbsp;<button data-id="${i.id}" class="ok">OK</button></li>`
+
+            console.log(li)
+            $('#rieltors').append(li)
+        }
+    });
+    $(document).on("click", ".ok", function () {
+        let $this = $(this)
+        let id = $(this).attr('data-id')
+        let inp = $(this).prev();
+        let v = inp.val().trim()
+        let dv = $(this).prev().attr('data-val')
+        let varr = v.split(',');
+        v = []
+        for (var i of varr) {
+            v.push(i.trim())
+        }
+        inp.val(v)
+        let hudud = 0 < v.length ? v : [];
+        console.log(v, v.length, hudud)
+        let url = 'hudud';
+        let data = {id: id, hudud: hudud}
+        let success = function (data) {
+            console.log(data)
+            if (data) {
+                $this.text('✅')
+                setTimeout(function () {
+                    $this.text('OK')
+                }, 500)
+            }
+        };
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: success,
+            dataType: 'json'
+        });
+
+    })
+
+</script>

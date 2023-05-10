@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>LIST-RTD</title>
+    <link rel="stylesheet" href="../style.css">
+    <!--
+        <script src="/socket.io/socket.io.js"></script>
+    -->
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+</head>
+<body>
+
+<div id="tweety">
+    <div class="container">
+        <header class="toolbar">
+            <h2>BAZA RTD</h2>
+        </header>
+        <div class="list__wrapper" @scroll="onScroll">
+            <ul class="list">
+                <li class="list__item tweet" v-for="tweet in tweets">
+                    <div class="tweet__left">
+                        <img :src="tweet.avatar" class="tweet__img">
+                    </div>
+                    <div class="tweet__body">
+                        <strong class="tweet__name badge">{{ tweet.id }}</strong>
+                        <a target="_blank" :href="'/flat?id=' + tweet.id" class=" btn btn-success">{{ tweet.landmark
+                            }}</a>
+                        <p class="tweet__text badge">{{ tweet.pricestart }}</p>
+                    </div>
+                </li>
+                <li class="list__loader">
+                    <img src="loader.gif">
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    var origin = window.location.origin
+    var pathname = window.location.pathname
+</script>
+
+
+<script src="/vue/dist/vue.min.js"></script>
+<script src="/vue-resource/dist/vue-resource.min.js"></script>
+<script src="main.js"></script>
+
+
+
+

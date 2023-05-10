@@ -1,0 +1,183 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background: #dff0d8;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 13px;
+    line-height: 15px;
+    color: #292f33;
+}
+
+.display_none{
+    display: none;
+}
+
+.prodan{
+    background-color: #f5b0a8!important;
+}
+.neprodan{
+    background-color: #77ef77!important;
+}
+.vremennoostanovlen{
+    background-color: #f7f77b!important;
+}
+.sdan{
+    background-color: #eab2e8!important;
+}
+.nesdan{
+    background-color: #f3b476!important;
+}
+.telotklvnezoni{
+    background-color: #cccccc!important;
+}
+.telneotvetil{
+    background-color: saddlebrown!important;
+}
+.nepravilninomer{
+    background-color: black!important;
+}
+.t{
+    font-size: 12px;
+    font-style: italic;
+}
+
+
+
+.header1{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.headerlist{
+    width: 100vw ;
+    max-width: 800px ;
+}
+
+#tweety {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*height: 1vh;*/
+}
+
+.container2 {
+    height: 60vh;
+    /*540 320px*/
+    width: 100vw ;
+    max-width: 800px ;
+    background-color: #fff;
+    box-shadow: 0px 1px 2px rgba(0,0,0,.5);
+    border-radius: 3px;
+    /*padding-top: 48px;*/
+    position: relative;
+    overflow: hidden;
+}
+
+.toolbar {
+    height: 48px;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid #e8e8e8;
+    text-align: center;
+}
+
+.toolbar h2 {
+    font-size: 15px;
+    line-height: 16px;
+    margin: 16px 0;
+}
+
+.list__wrapper {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.list__item {
+    /*min-height: 85px;*/
+    /*border-bottom: 1px solid #e8e8e8;*/
+    /*padding: 10px;*/
+    /*background-color: #fff;*/
+    margin-bottom: 1px!important;
+}
+
+.landmarktxt{
+    display: inline-block;
+    max-width: 70vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.list__loader {
+    height: 46px;
+    display: block;
+    padding: 12px 0;
+}
+
+.list__loader img {
+    margin: 0 auto;
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.tweet {
+    display: flex;
+    align-items: flex-start;
+}
+
+.tweet__left {
+    padding-right: 10px;
+    height: 100%;
+}
+
+.tweet__body {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.tweet__img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.tweet__text {
+    padding: 0;
+    margin: 0;
+    margin-top: 1px;
+}
+
+.tweet__username {
+    color: #848c97;
+    font-size: 12px;
+    margin-left: 3px;
+}
+
+.tweet__date {
+    color: #848c97;
+    position: absolute;
+    font-size: 12px;
+    right: 0;
+    top: 0;
+}
+
+.buyerdel {
+    color:#fff!important;
+}

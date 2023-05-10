@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content='width=device-width,   initial-scale=1.0,  minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>LIST-RTD</title>
+    <link rel="stylesheet" href="style.css">
+
+
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+</head>
+<body>
+<div include-html="menulist.html"></div>
+<div id="tweety">
+    <div class="container2">
+        <!--<header class="toolbar">
+            <h2>BAZA RTD</h2>
+        </header>-->
+        <div class="list__wrapper" @scroll="onScroll">
+            <ul class="list list-group">
+                <li class="list__item tweet  list-group-item list-group-item-success"
+                    v-for="flat in flats"
+                    v-bind:class="[
+                    flat.msgstatus=='продан'?prodan:
+                    flat.msgstatus=='не продан'?neprodan:
+                    flat.msgstatus=='временно остановлен'?vremennoostanovlen:
+                    flat.msgstatus=='сдан'?sdan:
+                    flat.msgstatus=='не сдан'?nesdan:
+                    flat.msgstatus=='тел откл. вне зоны'?telotklvnezoni:
+                    flat.msgstatus=='тел не ответил'?telneotvetil:
+                    flat.msgstatus=='неправильный номер'?nepravilninomer:
+                    ''
+                    ]"
+                >
+
+                    <span class="tweet__body ">
+                        <a target="_self" :href="'/flat?id=' + flat.id" class=" landmarktxt ">
+                            {{ flat.landmark }}.
+                        </a>
+                        <a target="_blank" :href="'/flat?id=' + flat.id" class=" ">
+                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        </a>
+
+                        &nbsp&nbsp&nbsp<a v-if="flat.tel" :href="'tel:+'+flat.tel" class="Blondie">
+                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                    </a>
+
+                    </span>
+                </li>
+                <li class="list__loader">
+                    <img src="loader.gif">
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script src="/vue/dist/vue.min.js"></script>
+<script src="/vue-resource/dist/vue-resource.min.js"></script>
+<script type="text/javascript">
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+
+    new Vue({
+        el: '#tweety',
+        data: {
+            flats: [],
+            resource_url: `${origin}/list/landmark/0/500`,
+            loading: false,
+            prodan: 'prodan',
+            neprodan: 'neprodan',
+            vremennoostanovlen: 'vremennoostanovlen',
+            sdan: 'sdan',
+            nesdan: 'nesdan',
+            telotklvnezoni: 'telotklvnezoni',
+            telneotvetil: 'telneotvetil',
+            nepravilninomer: 'nepravilninomer'
+        },
+        methods: {
+            onScroll: function (event) {
+                let wrapper = event.target,
+                    list = wrapper.firstElementChild
+                //console.log('wrapper......', wrapper)
+                //console.log('list......', list)
+
+
+                let scrollTop = wrapper.scrollTop,
+                    wrapperHeight = wrapper.offsetHeight,
+                    listHeight = list.offsetHeight
+
+                let diffHeight = listHeight - wrapperHeight
+
+                // console.log('listHeight......', listHeight)
+                // console.log('wrapperHeight......', wrapperHeight)
+                // console.log('diffHeight......', diffHeight)
+                // console.log('scrollTop......', scrollTop)
+
+                if (diffHeight <= scrollTop && !this.loading) {
+                    this.load()
+                }
+            },
+            load: function () {
+                this.loading = true
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+                    let data = response.data;
+                    this.flats = this.flats.concat(data.flats)
+                    this.resource_url = data.next_page_url
+                    this.loading = false
+                }, function (error) {
+                    console.log(error)
+                    this.loading = false
+                })
+            }
+        },
+        created: function () {
+            this.load()
+        }
+
+
+    })
+
+
+</script>
+<script src="main.js"></script>
+
+
+
+
+
+

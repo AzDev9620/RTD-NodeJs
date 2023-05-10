@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport'
+          content=' content="width=100, initial-scale=1"'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>ПОКУПАТЕЛЬ-RTD</title>
+    <!--    <script src="/socket.io/socket.io.js"></script>-->
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!--<link href="/bootstrap-toggle-master/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="/bootstrap-toggle-master/js/bootstrap-toggle.min.js"></script>-->
+    <script src="/vue/dist/vue.min.js"></script>
+    <script src="/vue-resource/dist/vue-resource.min.js"></script>
+
+    <link rel="stylesheet" href='/json-forms/dist/css/brutusin-json-forms.min.css'/>
+    <script src="/json-forms/dist/js/brutusin-json-forms.min.js"></script>
+    <script src="/json-forms/dist/js/brutusin-json-forms-bootstrap.min.js"></script>
+    <script src="/buyerprofileschema.js"></script>
+
+    <!--<link rel="stylesheet" href="style.css">-->
+
+    <style type="text/css" media="screen">
+        body {
+            padding: 0px;
+        }
+
+        .display_none {
+            display: none;
+        }
+
+        #container {
+            width: 380px;
+            /*width: 460px;*/
+            position: relative;
+            top: 60px;
+            /*margin-right: 10px;*/
+        }
+
+        #getdata
+            /*,#getdata:hover*/
+        {
+            color: #FFEB3B;
+            /*background-color: #337ab7;*/
+            /*border-color: #2e6da4;*/
+        }
+
+        #props-dropdown {
+            display: inline-flex;
+        }
+
+        #tweety {
+            /*display: flex;*/
+            align-items: center;
+            justify-content: center;
+            /*height: 1vh;*/
+        }
+
+        .container2 {
+            height: 60vh;
+            min-height: 10vh;
+            /*540 320px*/
+            /*width: 100vw ;*/
+            max-width: 800px;
+            background-color: #fff;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, .5);
+            border-radius: 3px;
+            /*padding-top: 48px;*/
+            position: relative;
+            overflow: hidden;
+        }
+
+        .list__wrapper {
+            overflow-y: scroll;
+            overflow-x: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
+        .list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .list__item {
+            /*min-height: 85px;*/
+            /*border-bottom: 1px solid #e8e8e8;*/
+            /*padding: 10px;*/
+            /*background-color: #fff;*/
+        }
+
+        .landmarktxt {
+            display: inline-block;
+            max-width: 100%;
+            /*max-width: 26vw;*/
+            /*white-space: nowrap;*/
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prodan {
+            background-color: #f5b0a8 !important;
+        }
+
+        .neprodan {
+            background-color: #77ef77 !important;
+        }
+
+        .sdan {
+            background-color: #eab2e8 !important;
+        }
+
+        .nesdan {
+            background-color: #f3b476 !important;
+        }
+
+        .copybtn {
+            text-decoration: dotted !important;
+            cursor: pointer;
+        }
+
+        .wishdel, .wishdel > * {
+            color: #fff !important;
+        }
+    </style>
+
+</head>
+<body>
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a href="/buyerlist" class="navbar-brand">RTD</a>
+
+            <div id="props-dropdown" class="dropdown   ">
+                <!--<button class="   btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Разделы
+                    <span class="caret"></span>
+                </button>-->
+                <a class="   btn btn-primary " href="/buyerprofile?id=0" class="">Новый пок.</a>
+                <ul id="props" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <!--<li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>-->
+                </ul>
+            </div>
+            <button href="#" id="getdata" class=" btn btn-primary"><span class="glyphicon glyphicon-send "
+                                                                         aria-hidden="true"></span>
+            </button>
+            <button id="addwish" type="button" class="btn btn-primary btn  ">Добавить желание <span
+                    class=" glyphicon glyphicon-plus"></span></button>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+
+<div id="container">
+    <div v-if="rol===1||rol===6" id="rieltorlist" class="form-group">
+        <select v-model="selected" class="form-control" id="rieltor">
+            <option v-for="rieltor in rieltors" v-bind:value="rieltor.id">
+                {{ rieltor.name }}
+            </option>
+        </select>
+
+    </div>
+
+    <div id="container-form"></div>
+    <div id="tweety"><!--class="row"-->
+        <div class=""><!--col-lg-6-->
+            <div class="input-group">
+                <input id="textsearch" type="text" class="form-control" placeholder="Поиск..." v-on:keyup="search">
+                <span class="input-group-btn">
+        <button id="textsearchbtn" class="btn btn-default" type="button" v-on:click="search">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        </button>
+      </span>
+            </div>
+            <!-- /input-group -->
+            <div>
+                <div class="container2">
+                    <!--<div id="resultname"></div>
+                    <div id="datalength">{{ datalength }}</div>-->
+                    <!--<header class="toolbar">
+                        <h2>BAZA RTD</h2>
+                    </header>-->
+                    <div class="list__wrapper" @scroll="onScroll">
+                        <ul class="list list-group">
+                            <li class="list__item tweet  list-group-item list-group-item-success  "
+                                v-for="tweet in tweets"
+                                v-bind:class="[tweet.msgstatus=='продан'?prodan: tweet.msgstatus=='не продан'?neprodan :tweet.msgstatus=='сдан'?sdan :tweet.msgstatus=='не сдан'?nesdan :'']"
+                            >
+                                <!--<div class="tweet__left">
+                                    <img :src="tweet.avatar" class="tweet__img">
+                                </div>-->
+                                <span class="tweet__body ">
+                        <a target="_self" :href="'/flat?id=' + tweet.id" class=" landmarktxt ">
+                            {{ tweet.landmark }}
+                        </a>
+                        <a target="_blank" :href="'/flat?id=' + tweet.id" class=" ">
+                            <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        </a>
+                        &nbsp&nbsp&nbsp<a :href="'tel:+'+tweet.tel" class="Blondie"
+                                          v-bind:class="{ display_none: tweet.tel==null }">
+                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                    </a>
+                                    <!--&nbsp&nbsp&nbsp<a target="_blank" :href="tweet.link" class="Blondie">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </a>-->
+                    </span>
+                            </li>
+                            <li class="list__loader">
+                                <img src="loader.gif">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.col-lg-6 -->
+    </div>
+    <!-- /.row -->
+    <div id="wishes">
+        <div class="  header1">
+            <ul id="ul-wishes" class="list-group headerlist ">
+                <li v-for="wish in wishes" class="wsh list-group-item list-group-item-info">
+                    <a :href="'/buyersearch?id='+wish.id+'&&b='+b+'&&pd='+wish.pd" class="">
+                        {{ wish.txt }}
+                    </a>
+                    &nbsp<a :href="'/buyersearch?id='+wish.id+'&&b='+b+'&&pd='+wish.pd" class="" target="_blank">
+                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                </a>
+                    &nbsp<a :href="'/wishresultlist?id='+wish.id+'&&resultname='+wish.txt" class="" target="_self">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </a>
+                    &nbsp<a :href="'/wishresultlist?id='+wish.id+'&&resultname='+wish.txt" class="" target="_blank">
+                    <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                </a>
+                    <!--<span class="badge pull-left">
+
+                    </span>-->
+                    <hr>
+                    <div>
+                        <span class="badge pull-right">
+                         <a class="wishdel" v-on:click="delwish(wish.id)" class=""
+                            target="_blank">
+                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                         </a>
+                    </span>
+                        <!-- &nbsp&nbsp&nbsp-->
+                        <span class="badge pull-right">
+                        {{ wish.len }}
+                    </span>
+                        <span class="copybtn glyphicon glyphicon-check  pull-right"
+                              aria-hidden="true">скопировать</span>
+
+
+                        <a :href="ur+'/wishresultlistext?id='+wish.id+'&&resultname='+wish.txt" class="extlink"
+                           target="_blank">
+                            <!--{{ ur+'/wishresultlistext?id='+wish.id+'&&resultname='+wish.txt }}-->
+                            ссылка для покупателя
+                        </a>
+
+
+                    </div>
+
+
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript">
+    let access = true;
+    let uid, rol;
+
+    const container = document.getElementById('container-form');
+    const BrutusinForms = brutusin["json-forms"];
+    var bf;
+    let prevdata;
+    const origin = window.location.origin
+    const pathname = window.location.pathname
+    const paramsobj = searchtoobject();
+    let id = Number(paramsobj.id !== undefined ? paramsobj.id : 0);
+
+    const uniqueArray = function (arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) === pos;
+        });
+    };
+
+
+    new Vue({
+        el: '#ul-wishes',
+        data: {
+            wishes: [],
+            b: id,
+            // resource_url: origin + pathname + "/" + id + "/" + uid + "/" + rol,
+            resource_url: `${origin}${pathname}/${id}`,
+            loading: false,
+            ur: origin,
+            // uid
+        },
+        methods: {
+            load: function () {
+//                this.loading = true
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+
+                    let data = response.data
+
+                    access = data.access;
+                    if (!access) {
+                        $("#getdata").attr({"disabled": "disabled"});
+                        $("#addwish").attr({"disabled": "disabled"});
+                    }
+
+
+                    const schema = schem.buyer.schema;
+                    rol = data.rol
+                    uid = data.uid
+                    // this.uid = data.uid
+                    prevdata = data.buyer.personaldata;
+                    const rieltorid = response.data.buyer.uid;
+                    console.log('prevdata......', prevdata)
+                    const customerdata = prevdata !== undefined ? prevdata.maininfo.customerdata : "";
+                    console.log('customerdata......', customerdata)
+//                    this.wishes = response.data.wishes;
+                    let ws = []
+                    const pn = prevdata !== undefined ? prevdata.maininfo.customerdata : "";
+                    response.data.wishes.forEach(function (w) {
+                        const mi = w.wish.maininfo;
+                        const txt =
+                            pn + " -- " +
+                            (mi.retype !== undefined ? mi.retype : '~') + "-" +
+                            (mi.dealtype !== undefined ? mi.dealtype : '~') + "-" +
+                            (mi.address !== undefined && mi.address.district !== undefined ? mi.address.district : '~') + " " +
+                            (mi.rooms !== undefined ? mi.rooms : '~') + "/" +
+                            (mi.floor !== undefined ? mi.floor : '~') + "/" +
+                            (mi.storeys !== undefined ? mi.storeys : '~') + " " +
+                            "цена: с " + (mi.pricestart !== undefined ? mi.pricestart : '~') + " " +
+                            "до " + (mi.priceend !== undefined ? mi.priceend : '~');
+
+                        w.result = w.result !== null ? w.result : []
+                        ws.push({
+                            id: w.id,
+                            wish: w.wish.maininfo,
+                            txt: txt.replace(/\s/g, "_"),
+                            len: w.result.length,
+                            pd: customerdata
+                        });
+
+
+                    });
+                    this.wishes = ws
+                    console.log('this.wishes...', this.wishes)
+//            var BrutusinForms = brutusin["json-forms"];
+                    bf = BrutusinForms.create(schema);
+//            var container = document.getElementById('container');
+                    bf.render(container, prevdata);
+                    let prs = schema.properties;
+                    let btns = "";
+                    Object.keys(prs).forEach(function (key) {
+//                console.lsigninog('key', key);
+//                console.log('key', prs[key].title);
+                        let t = prs[key].title;
+//                        btns += "<button class='pb btn btn-primary' data-key='" + key + "'>" + t + "</button>";
+                        btns += "<li class='pb '><a href='#' data-key='" + key + "'>" + t + "</a></li>";
+                    });
+                    $("#props").html(btns);
+//                    $(".prop-value").hide();
+//                    this.loading = false
+
+                    rieltors = response.data.rieltors;
+                    rieltors.unshift({id: 0, name: "Выберите риелтора:"});
+                    new Vue({
+                        el: '#rieltorlist',
+                        data: {
+                            selected: rieltorid !== undefined ? rieltorid : 0,
+                            options: rieltors
+                        }
+                    });
+
+                }, function (error) {
+                    console.log(error)
+//                    this.loading = false
+                })
+            },
+            delwish: function (id) {
+                if (!access) return;
+                this.$http.delete('/wish/' + id).then(function (response) {
+//                    console.log('del-response......', response)
+                    let ws = this.wishes;
+                    for (var i in ws) {
+                        if (id == ws[i].id) {
+                            if (i > -1) {
+                                this.wishes.splice(i, 1);
+                            }
+                        }
+                    }
+                }, function (error) {
+                    console.log(error)
+                })
+            }
+        },
+        created: function () {
+            this.load()
+        }
+    });
+
+
+    // add support for password and file
+    BrutusinForms.addDecorator(function (element, schema) {
+        if (element.tagName) {
+            const tagName = element.tagName.toLowerCase();
+            const className = element.className.toLowerCase();
+
+            if ($(element).text() === 'Add' || $(element).text() === 'Add item') {
+                $(element).text("").addClass("glyphicon glyphicon-plus")
+//                console.log("element....", $(element))
+            }
+            if (schema !== undefined && schema.hasOwnProperty('c') && tagName === "label") {
+//                console.log("element....", element )
+//                console.log("schema....", $(element).html() )
+                $(element).css({"cursor": "pointer", "text-decoration": "underline"});
+                $(element).parent().next("td").fadeToggle(0);
+
+                $(element).click(function () {
+//                    $(this).parent().next("td").hide();
+                    $(this).parent().next("td").fadeToggle(300)
+                });
+            }
+
+            if (tagName === "td" && className === "prop-name") {
+                if (schema.format === "hidden") {
+//                     console.log(element)
+//                    element.display = "none";
+                    $(element).hide();
+                }
+            }
+            if (tagName === "input" && schema.type === "string") {
+                if (schema.format === 'inputstream' || schema.format === 'file') {
+                    element.type = 'file';
+                } else if (schema.format === 'password') {
+                    element.type = 'password';
+                } else if (schema.format === 'date') {
+                    element.type = 'datetime-local';
+                } else if (schema.format === 'tel') {
+                    element.type = 'tel';
+                } else if (schema.format === 'color') {
+                    element.type = 'color';
+                } else if (schema.format === 'getgeopos') {
+                    element.type = 'button';
+                    element.value = 'Получить геопозицию';
+                    $(element).click(function () {
+                        let options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                        let success = function (pos) {
+                            let crd = pos.coords;
+//                            console.log(crd );
+                            let geolocation = {
+                                "lat": crd.latitude,
+                                "lon": crd.longitude,
+                                "acc": Math.round(crd.accuracy)
+                            };
+//                            console.log(schema);
+//                            console.log(element);
+                            if (prevdata.maininfo === undefined) {
+                                prevdata['maininfo'] = {address: {geolocation: geolocation}}
+                            } else {
+                                prevdata = bf.getData();
+                                console.log(prevdata);
+                                prevdata.maininfo.address['geolocation'] = geolocation;
+                            }
+                            $(container).empty();
+                            bf.render(container, prevdata);
+                        }
+                        let error = function (err) {
+                            console.warn(err);
+                        }
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+                    });
+                } else if (schema.format === 'toggle') {
+                    element.type = 'button';
+                    element.value = 'toggle';
+                    $(element).click(function (e) {
+                        console.log(e);
+                        console.log(schema);
+                        console.log(element);
+//                        $(this).closest("tr").nextAll("tr").hide();
+
+                    });
+
+                }
+            }
+        }
+    });
+
+
+    new Vue({
+        el: '#tweety',
+        data: {
+            pages: 5,
+            tweets: [],
+            text: "",
+            resource_url: origin + '/textsearch/' + this.text + '/0/' + this.pages,
+            loading: false,
+            prodan: 'prodan',
+            neprodan: 'neprodan',
+            sdan: 'sdan',
+            nesdan: 'nesdan'
+        },
+        methods: {
+            search: function () {
+
+
+                this.text = $("#textsearch").val();
+                if (this.text.length == "" || this.text === undefined) {
+                    $(".container2").hide()
+                    return
+                }
+                $(".container2").show()
+                this.resource_url = origin + '/textsearch/' + this.text + '/0/' + this.pages
+                console.log(this.text)
+                console.log(this.resource_url)
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+
+                    let json = response.data;
+
+                    // let searcharray = json.data;
+
+
+//                    for (var i in  searcharray) {
+//                        searcharray[i].landmark = searcharray[i].landmark.replace(this.text,
+//                                '<span>' + this.text + '</span>'
+//                        ).trim()
+//                    }
+
+
+                    this.tweets = json.data
+                    this.resource_url = json.next_page_url
+                    this.loading = false
+                }, function (error) {
+                    console.log(error)
+                    this.loading = false
+                })
+
+            },
+            onScroll: function (event) {
+                let wrapper = event.target,
+                    list = wrapper.firstElementChild
+                //console.log('wrapper......', wrapper)
+                //console.log('list......', list)
+                let scrollTop = wrapper.scrollTop,
+                    wrapperHeight = wrapper.offsetHeight,
+                    listHeight = list.offsetHeight
+
+                let diffHeight = listHeight - wrapperHeight
+
+                console.log('listHeight......', listHeight)
+                console.log('wrapperHeight......', wrapperHeight)
+                console.log('diffHeight......', diffHeight)
+                console.log('scrollTop......', scrollTop)
+
+                if (diffHeight <= scrollTop && !this.loading) {
+                    this.load()
+                }
+            },
+            load: function () {
+                this.loading = true
+//                this.resource_url = origin + '/textsearch/' + this.text + '/0/50'
+                this.$http.get(this.resource_url).then(function (response) {
+                    console.log('response......', response)
+
+
+                    let json = response.data;
+                    let tweets = json.data
+
+                    this.tweets = this.tweets.concat(tweets)
+                    this.resource_url = json.next_page_url
+                    this.loading = false
+                }, function (error) {
+                    console.log(error)
+                    this.loading = false
+                })
+            }
+        },
+        created: function () {
+//
+            //this.load()
+        }
+    });
+    $(".container2").hide()
+    $(document).on("click", "#props .pb", function (e) {
+//        console.log($(this));
+        let label = $(this).text();
+//        console.log(label);
+        let l = $("#container").find("label:contains(" + label + ")")
+//        console.log(l);
+        let tr = l.closest("tr");
+        let trsibl = tr.siblings("tr");
+        console.log(trsibl);
+        trsibl.hide();
+        tr.show();
+        tr.find("tr").show();
+    });
+
+    let xhr, stat = 0;
+
+    $("#getdata").click(function () {
+        if (!access) return;
+        $("#getdata").css({"color": "#FF0000"})
+        let isvalid = bf.validate()
+        console.log(isvalid)
+        console.log(bf.getData())
+        if (!isvalid || bf.getData() == null) return
+        let values = (JSON.stringify(bf.getData(), null, 2)).replace("'", '\\"');
+
+        if (xhr !== undefined && stat === 0) {
+            xhr.abort()
+        }
+        uid = $('#rieltor').val() !== undefined ? $('#rieltor').val() : uid
+        console.log('uid..', uid)
+        xhr = $.ajax({
+            //processData:true,
+            //async: false,
+            url: '/buyer',
+            method: id === 0 ? 'post' : 'put',
+            data: {id: id, s: values, uid},
+            beforeSend: function () {
+                $("#getdata").css({"color": "#FF5722"})
+                stat = 0;
+            },
+            success: function (data) {
+                id = data.id
+                if (history.pushState) {
+                    let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + id;
+                    window.history.pushState({path: newurl}, '', newurl);
+                    $("#getdata").css({"color": "#FFEB3B"})
+                }
+            }, complete: function (textStatus) {
+//                console.log(textStatus)
+                stat = textStatus.status
+            }
+        });
+    });
+
+    $("#addwish").click(function () {
+        if (!access) return;
+        if (id !== 0) window.location.href = `buyersearch?id=0&&b=${id}`
+    });
+
+    function searchtoobject() {
+        let search = window.location.search;
+        let params = search.replace("\?", "");
+        let paramsobj = {};
+        params.split("&&").forEach(function (p) {
+            paramsobj[p.split("=")[0]] = p.split("=")[1];
+        });
+        return paramsobj;
+    }
+
+    const onClick = function (evt) {
+
+//        const link = $('.extlink').text();
+        const link = document.querySelector('#extlink');
+        console.log(evt)
+        const range = document.createRange();
+        range.selectNode(link);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        const successful = document.execCommand('copy');
+    };
+
+    //    document.querySelector('button').addEventListener('click', onClick);
+
+    $(document).on("click", ".copybtn", function () {
+//        console.log(evt)
+        $(".copybtn").css({"color": "#31708f"})
+        const link = $(this).closest("div").find('.extlink').attr("href");
+        copyToClipboard(link)
+        $(this).css({"color": "red"}).fadeOut(200).fadeIn(200);
+
+    });
+
+    //---------------------------------------
+
+    function copyToClipboard(str) {
+        const el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
+
+</script>
+<!--
+<script src="/dbcon.js"></script>
+-->
+
+

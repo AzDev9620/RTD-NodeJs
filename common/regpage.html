@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width,  minimum-scale=0.1, maximum-scale=1.0, user-scalable=yes'>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <!--<meta http-equiv="Refresh" content="300"/>-->
+    <title>REGPAGE</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <style type="text/css" media="screen">
+        body {
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<hr>
+<a id="main" class="btn btn-primary" href="main">MAIN</a>
+<a id="devices" class="btn btn-primary" href="devices">DEVICES</a>
+
+<hr/>
+<h1>TEST LOYIHA - MeteoSmart</h1>
+<hr/>
+
+<form method="post" action="" enctype="application/x-www-form-urlencoded">
+    <!--Profile #:<input class="" name="profile" id="profile" placeholder="profile"><br>-->
+    Login:<input class="" name="login" id="login" placeholder="login"><span id="logincheck"></span><br>
+    Password:<input class="" name="pass" id="password" placeholder="password"><br>
+    Name:<input class="" name="name" id="name" placeholder="name"><br>
+    Surname:<input class="" name="surname" id="surname" placeholder="surname"><br>
+    City:<input class="" name="city" id="city" placeholder="city"><br>
+    Address:<input class="" name="address" id="address" placeholder="address"><br>
+    Telefon:<input class="" name="telefon" id="telefon" placeholder="telefon"><br>
+
+
+    Admins:<input  class="" name="admins" id="admins" placeholder="admins" value="0"><br>
+    adminmonitor:<input class="" name="adminmonitor" id="adminmonitor" placeholder="adminmonitor" value="0"><br>
+    skladkirim:<input class="" name="skladkirim" id="skladkirim" placeholder="skladkirim" value="0"><br>
+    skladchiqim:<input class="" name="skladchiqim" id="skladchiqim" placeholder="skladchiqim" value="0"><br>
+    agent:<input class="" name="agent" id="agent" placeholder="agent" value="0"><br>
+    magazinchi:<input class="" name="magazinchi" id="magazinchi" placeholder="magazinchi" value="0"><br>
+
+
+    <button class="" name="" id="" type="submit">submit</button>
+    <br>
+
+
+</form>
+
+
+</body>
+</html>
+
+<script>
+    var socket = io();
+    socket.on('connect', function () {
+        console.log('Siz soket serverga ulandingiz');
+    });
+
+
+    var uniqueArray = function (arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) == pos;
+        });
+    };
+
+
+    $("#login").on("keyup click focus blur", function (e) {
+        console.log("login keyup");
+        socket.emit('logincheck', $(this).val());
+    });
+
+
+    var timerId;
+
+
+    /**********************/
+
+
+    socket.on('lchkres', function (data) {
+        console.log("lchkres", data);
+        if (data) {
+            $("#logincheck").text(' login free...').css({"color": "green"});
+        } else {
+            $("#logincheck").text(' login exists...').css({"color": "red"});
+        }
+    });
+
+
+</script>
